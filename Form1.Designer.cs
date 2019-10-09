@@ -32,6 +32,7 @@
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.panelButtons = new System.Windows.Forms.Panel();
             this.button2PointsLine = new System.Windows.Forms.Button();
+            this.buttonDel = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainerMain)).BeginInit();
             this.splitContainerMain.Panel1.SuspendLayout();
             this.splitContainerMain.Panel2.SuspendLayout();
@@ -73,6 +74,7 @@
             // 
             // panelButtons
             // 
+            this.panelButtons.Controls.Add(this.buttonDel);
             this.panelButtons.Controls.Add(this.button2PointsLine);
             this.panelButtons.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panelButtons.Location = new System.Drawing.Point(0, 0);
@@ -89,6 +91,16 @@
             this.button2PointsLine.Text = "Линия";
             this.button2PointsLine.UseVisualStyleBackColor = true;
             this.button2PointsLine.Click += new System.EventHandler(this.button2PointsLine_Click);
+            // 
+            // buttonDel
+            // 
+            this.buttonDel.Location = new System.Drawing.Point(29, 62);
+            this.buttonDel.Name = "buttonDel";
+            this.buttonDel.Size = new System.Drawing.Size(195, 23);
+            this.buttonDel.TabIndex = 1;
+            this.buttonDel.Text = "Удалить";
+            this.buttonDel.UseVisualStyleBackColor = true;
+            this.buttonDel.Click += new System.EventHandler(this.buttonDel_Click);
             // 
             // FormMain
             // 
@@ -114,6 +126,7 @@
         private System.Windows.Forms.PictureBox pictureBox1;
         private System.Windows.Forms.Panel panelButtons;
         private System.Windows.Forms.Button button2PointsLine;
+        private System.Windows.Forms.Button buttonDel;
     }
 }
 

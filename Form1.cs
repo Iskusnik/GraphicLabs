@@ -36,18 +36,40 @@ namespace _2pointsNET4_8
 
         private void pictureBox1_Paint(object sender, PaintEventArgs e)
         {
+            Pen usualPen = new Pen(Color.Green, 3);
+            SolidBrush solidBrush = new SolidBrush(Color.Green);
+
+
+            Pen specPen = new Pen(Color.Orange, 3);
+            SolidBrush solidBrushSpec = new SolidBrush(Color.Orange);
             foreach (var line in lines)
             {
-                int r = Line.pointR;
-                e.Graphics.DrawLine(new Pen(Color.Black, 3), line.A, line.B);
+                if (line != selectedLine)
+                {
+                    int r = Line.pointR;
+                    e.Graphics.DrawLine(new Pen(Color.Black, 3), line.A, line.B);
 
-                //Ширина и высота задаются диаметром
-                //Координаты указывают в левый верхний угол прямоугольника, в котором находится круг
-                e.Graphics.DrawEllipse(new Pen(Color.Green, 3), line.A.X - r, line.A.Y - r, 2 * r, 2 * r);
-                e.Graphics.FillEllipse(new SolidBrush(Color.Green), line.A.X - r, line.A.Y - r, 2 * r, 2 * r);
-               
-                e.Graphics.DrawEllipse(new Pen(Color.Green, 3), line.B.X - r, line.B.Y - r, 2 * r, 2 * r);
-                e.Graphics.FillEllipse(new SolidBrush(Color.Green), line.B.X - r, line.B.Y - r, 2 * r, 2 * r);
+                    //Ширина и высота задаются диаметром
+                    //Координаты указывают в левый верхний угол прямоугольника, в котором находится круг
+                    e.Graphics.DrawEllipse(usualPen, line.A.X - r, line.A.Y - r, 2 * r, 2 * r);
+                    e.Graphics.FillEllipse(solidBrush, line.A.X - r, line.A.Y - r, 2 * r, 2 * r);
+
+                    e.Graphics.DrawEllipse(usualPen, line.B.X - r, line.B.Y - r, 2 * r, 2 * r);
+                    e.Graphics.FillEllipse(solidBrush, line.B.X - r, line.B.Y - r, 2 * r, 2 * r);
+                }
+                else
+                {
+                    int r = Line.pointR;
+                    e.Graphics.DrawLine(new Pen(Color.OrangeRed, 3), line.A, line.B);
+
+                    //Ширина и высота задаются диаметром
+                    //Координаты указывают в левый верхний угол прямоугольника, в котором находится круг
+                    e.Graphics.DrawEllipse(specPen, line.A.X - r, line.A.Y - r, 2 * r, 2 * r);
+                    e.Graphics.FillEllipse(solidBrushSpec, line.A.X - r, line.A.Y - r, 2 * r, 2 * r);
+
+                    e.Graphics.DrawEllipse(specPen, line.B.X - r, line.B.Y - r, 2 * r, 2 * r);
+                    e.Graphics.FillEllipse(solidBrushSpec, line.B.X - r, line.B.Y - r, 2 * r, 2 * r);
+                }
             }
         }
 
@@ -58,6 +80,7 @@ namespace _2pointsNET4_8
             selectMode = -1;
             float k = 0;
             float b = 0;
+
             //Доп длина клика по линии
             int r = 4;
 
@@ -159,5 +182,11 @@ namespace _2pointsNET4_8
             }
         }
 
+        private void buttonDel_Click(object sender, EventArgs e)
+        {
+            lines.Remove(selectedLine);
+            selectedLine = null;
+            Refresh();
+        }
     }
 }
