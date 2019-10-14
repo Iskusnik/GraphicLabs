@@ -10,16 +10,15 @@ using System.Windows.Forms;
 
 namespace _2pointsNET4_8
 {
+    //TODO: Добавить вывод информации о выбранном объекте
     public partial class FormMain : Form
     {
-        List<Line> lines = new List<Line>(10);
+        List<GraphicObject> graphicObjects = new List<GraphicObject>(10);
         bool isMouseDown = false;
-        Line selectedLine = new Line();
-        PointF selectedPoint = new Point();
+        GraphicObject selectedObj = null;
+        PointF selectedPoint;
         //-1 - ничего
-        //0 - линия
-        //1 - точка А
-        //2 - точка B
+        //1 - что-то
         int selectMode = -1;
 
         public FormMain()
@@ -30,45 +29,24 @@ namespace _2pointsNET4_8
 
         private void button2PointsLine_Click(object sender, EventArgs e)
         {
-            lines.Add(new Line(pictureBox1.Width, pictureBox1.Height));
+            graphicObjects.Add(new Line(pictureBox1.Width, pictureBox1.Height));
             Refresh();
         }
 
         private void pictureBox1_Paint(object sender, PaintEventArgs e)
         {
-            Pen usualPen = new Pen(Color.Green, 3);
-            SolidBrush solidBrush = new SolidBrush(Color.Green);
-
-
-            Pen specPen = new Pen(Color.Orange, 3);
+            Pen specPen = new Pen(Color.OrangeRed, 3);
             SolidBrush solidBrushSpec = new SolidBrush(Color.Orange);
-            foreach (var line in lines)
+
+            foreach (var obj in graphicObjects)
             {
-                if (line != selectedLine)
+                if (obj is Line)
                 {
-                    int r = Line.pointR;
-                    e.Graphics.DrawLine(new Pen(Color.Black, 3), line.A, line.B);
-
-                    //Ширина и высота задаются диаметром
-                    //Координаты указывают в левый верхний угол прямоугольника, в котором находится круг
-                    e.Graphics.DrawEllipse(usualPen, line.A.X - r, line.A.Y - r, 2 * r, 2 * r);
-                    e.Graphics.FillEllipse(solidBrush, line.A.X - r, line.A.Y - r, 2 * r, 2 * r);
-
-                    e.Graphics.DrawEllipse(usualPen, line.B.X - r, line.B.Y - r, 2 * r, 2 * r);
-                    e.Graphics.FillEllipse(solidBrush, line.B.X - r, line.B.Y - r, 2 * r, 2 * r);
-                }
-                else
-                {
-                    int r = Line.pointR;
-                    e.Graphics.DrawLine(new Pen(Color.OrangeRed, 3), line.A, line.B);
-
-                    //Ширина и высота задаются диаметром
-                    //Координаты указывают в левый верхний угол прямоугольника, в котором находится круг
-                    e.Graphics.DrawEllipse(specPen, line.A.X - r, line.A.Y - r, 2 * r, 2 * r);
-                    e.Graphics.FillEllipse(solidBrushSpec, line.A.X - r, line.A.Y - r, 2 * r, 2 * r);
-
-                    e.Graphics.DrawEllipse(specPen, line.B.X - r, line.B.Y - r, 2 * r, 2 * r);
-                    e.Graphics.FillEllipse(solidBrushSpec, line.B.X - r, line.B.Y - r, 2 * r, 2 * r);
+                    Line line = (Line)obj;
+                    if (line != selectedObj)
+                        line.DrawObject(e.Graphics, null, null);
+                    else
+                        line.DrawObject(e.Graphics, specPen, solidBrushSpec);
                 }
             }
         }
@@ -78,49 +56,21 @@ namespace _2pointsNET4_8
         {
             isMouseDown = true;
             selectMode = -1;
-            float k = 0;
-            float b = 0;
-
-            //Доп длина клика по линии
-            int r = 4;
 
 
             //Координаты клика
             float clckX = e.Location.X;
             float clckY = e.Location.Y;
+            selectedPoint = new GraphicPoint(clckX, clckY);
 
-            foreach (var line in lines)
+            foreach (var obj in graphicObjects)
             {
-                k = (line.B.Y - line.A.Y) / (line.B.X - line.A.X);
-                b = (-line.A.X * (line.B.Y - line.A.Y) / (line.B.X - line.A.X)) + line.A.Y;
-
-                //Проверка клика по линии (или на расстоянии r от линии)
-                if (clckX < Math.Max(line.A.X, line.B.X) && clckX > Math.Min(line.A.X, line.B.X) &&
-                    clckY < Math.Max(line.A.Y, line.B.Y) && clckY > Math.Min(line.A.Y, line.B.Y) &&
-                    clckY - clckX*k - b < r && clckY - clckX * k - b > -r)
-                {
-                    selectedLine = line;
-                    //Сохраняем данные о начальном положении клика
-                    selectedPoint = new PointF(clckX, clckY);
-                    selectMode = 0;
-                }
-
-                //Проверка клика по точке
-                if ((clckX - line.A.X) * (clckX - line.A.X) < Line.pointR * Line.pointR &&
-                    (clckY - line.A.Y) * (clckY - line.A.Y) < Line.pointR * Line.pointR)
-                {
-                    selectedLine = line;
-                    selectedPoint = line.A;
-                    selectMode = 1;
-                }
-
-                if ((clckX - line.B.X) * (clckX - line.B.X) < Line.pointR * Line.pointR &&
-                    (clckY - line.B.Y) * (clckY - line.B.Y) < Line.pointR * Line.pointR)
-                {
-                    selectedLine = line;
-                    selectedPoint = line.B;
-                    selectMode = 2;
-                }
+                if (obj is Line)
+                    if ((obj as Line).CheckSelection(clckX, clckY))
+                    {
+                        selectedObj = obj;
+                        selectMode = 1;
+                    }
             }
         }
 
@@ -136,56 +86,39 @@ namespace _2pointsNET4_8
         {
             if (isMouseDown == true && selectMode != -1)
             {
-                
-                if (selectMode > 0)
+                if (selectedObj is Line)
                 {
-                    selectedPoint.X = e.Location.X;
-                    selectedPoint.Y = e.Location.Y;
+                    if ((selectedObj as Line).A.isSelected)
+                    {
+                        selectedPoint = new PointF(e.Location.X, e.Location.Y);
+                        (selectedObj as Line).A.point = selectedPoint;
+                    }
+                    else
+                    if ((selectedObj as Line).B.isSelected)
+                    {
+                        selectedPoint = new PointF(e.Location.X, e.Location.Y);
+                        (selectedObj as Line).B.point = selectedPoint;
+                    }
+                    else
+                    {
+                        float dx = e.Location.X - selectedPoint.X;
+                        float dy = e.Location.Y - selectedPoint.Y;
 
-                    if (selectMode == 1)
-                        selectedLine.A = selectedPoint;
+                        (selectedObj as Line).A.point = new PointF((selectedObj as Line).A.X + dx, (selectedObj as Line).A.Y + dy);
+                        (selectedObj as Line).B.point = new PointF((selectedObj as Line).B.X + dx, (selectedObj as Line).B.Y + dy);
 
-                    if (selectMode == 2)
-                        selectedLine.B = selectedPoint;
+                        selectedPoint = new PointF(e.Location.X, e.Location.Y);
+                    }
                 }
 
-                if (selectMode == 0)
-                {
-                    float dx = e.Location.X - selectedPoint.X;
-                    float dy = e.Location.Y - selectedPoint.Y;
-
-                    selectedLine.A = new PointF(selectedLine.A.X + dx, selectedLine.A.Y + dy);
-                    selectedLine.B = new PointF(selectedLine.B.X + dx, selectedLine.B.Y + dy);
-
-                    selectedPoint.X = e.Location.X;
-                    selectedPoint.Y = e.Location.Y;
-                }
-                //проверка на приближение к границе
-                /*
-                if (rect.Right > pictureBox1.Width)
-                {
-                    rect.X = pictureBox1.Width - rect.Width;
-                }
-                if (rect.Top < 0)
-                {
-                    rect.Y = 0;
-                }
-                if (rect.Left < 0)
-                {
-                    rect.X = 0;
-                }
-                if (rect.Bottom > pictureBox1.Height)
-                {
-                    rect.Y = pictureBox1.Height - rect.Height;
-                }*/
                 Refresh();
             }
         }
 
         private void buttonDel_Click(object sender, EventArgs e)
         {
-            lines.Remove(selectedLine);
-            selectedLine = null;
+            graphicObjects.Remove(selectedObj);
+            selectedObj = null;
             Refresh();
         }
     }
