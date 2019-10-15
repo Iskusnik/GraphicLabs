@@ -29,10 +29,16 @@ namespace _2pointsNET4_8
         {
             if ((clckX - this.X) * (clckX - this.X) < GraphicPoint.pointR * GraphicPoint.pointR &&
                 (clckY - this.Y) * (clckY - this.Y) < GraphicPoint.pointR * GraphicPoint.pointR)
-                isSelected = true;
+                return true;
             else
-                isSelected = false;
+                return false;
 
+            
+        }
+
+        public override bool ChangeSelection(float x, float y)
+        {
+            isSelected = CheckSelection(x, y);
             return isSelected;
         }
 
@@ -53,5 +59,12 @@ namespace _2pointsNET4_8
             graphics.FillEllipse(brush, X - r, Y - r, 2 * r, 2 * r);
 
         }
+
+        public override string GetInfo(Size size)
+        {
+            return "X:" + X.ToString() + " Y: " + (size.Height - Y).ToString();
+        }
+
+        
     }
 }

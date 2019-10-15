@@ -12,7 +12,10 @@ namespace _2pointsNET4_8
         public bool isSelected { get; set; }
 
         abstract public bool CheckSelection(float x, float y);
+
+        abstract public bool ChangeSelection(float x, float y);
         abstract public void DrawObject(Graphics graphics, Pen pen, Brush brush);
-        
+
+        abstract public string GetInfo(Size size);
     }
 }

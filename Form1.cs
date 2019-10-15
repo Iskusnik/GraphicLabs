@@ -21,6 +21,9 @@ namespace _2pointsNET4_8
         //1 - что-то
         int selectMode = -1;
 
+        //Координаты курсора
+        float hoverX, hoverY;
+
         public FormMain()
         {
             
@@ -66,7 +69,7 @@ namespace _2pointsNET4_8
             foreach (var obj in graphicObjects)
             {
                 if (obj is Line)
-                    if ((obj as Line).CheckSelection(clckX, clckY))
+                    if ((obj as Line).ChangeSelection(clckX, clckY))
                     {
                         selectedObj = obj;
                         selectMode = 1;
@@ -84,6 +87,27 @@ namespace _2pointsNET4_8
         //Передвижение объекта
         private void pictureBox1_MouseMove(object sender, MouseEventArgs e)
         {
+            float hoverX = e.Location.X;
+            float hoverY = e.Location.Y;
+            GraphicObject hoveredObj = null;
+            foreach (var obj in graphicObjects)
+                if (obj is Line)
+                    if ((obj as Line).CheckSelection(hoverX, hoverY))
+                    {
+                        hoveredObj = obj;
+                        if ((hoveredObj as Line).A.CheckSelection(hoverX, hoverY))
+                            hoveredObj = (hoveredObj as Line).A;
+                        else
+                            if ((hoveredObj as Line).B.CheckSelection(hoverX, hoverY))
+                            hoveredObj = (hoveredObj as Line).B;
+                    }
+            if (hoveredObj != null)
+                textBox1.Text = hoveredObj.GetInfo(pictureBox1.Size);
+            else
+                textBox1.Text = "";
+
+
+
             if (isMouseDown == true && selectMode != -1)
             {
                 if (selectedObj is Line)
@@ -113,6 +137,10 @@ namespace _2pointsNET4_8
 
                 Refresh();
             }
+            else
+            {
+
+            }
         }
 
         private void buttonDel_Click(object sender, EventArgs e)
@@ -121,5 +149,7 @@ namespace _2pointsNET4_8
             selectedObj = null;
             Refresh();
         }
+
+        
     }
 }

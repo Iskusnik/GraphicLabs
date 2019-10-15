@@ -15,9 +15,6 @@ namespace _2pointsNET4_8
         public GraphicPoint A { get; set; }
         public GraphicPoint B { get; set; }
 
-
-
-
         public Line(int maxX, int maxY)
         {
             int x = rand.Next(0, maxX);
@@ -39,37 +36,54 @@ namespace _2pointsNET4_8
         {
             Line line = this;
             int r = 5;
-            float k = (line.B.Y - line.A.Y) / (line.B.X - line.A.X);
-            float b = (-line.A.X * (line.B.Y - line.A.Y) / (line.B.X - line.A.X)) + line.A.Y;
             isSelected = false;
 
+
+
+            float k = (line.B.Y - line.A.Y) / (line.B.X - line.A.X);
+            float b = (-line.A.X * (line.B.Y - line.A.Y) / (line.B.X - line.A.X)) + line.A.Y;
+            
+
+            //Координаты точек
+            float Ax = this.A.X, Ay = this.A.Y;
+            float Bx = this.B.X, By = this.B.Y;
+
+            //Вычисляем параметры прямой
+            float A = Ay - By;
+            float B = Bx - Ax;
+            float C = Ax * By - Ay * Bx;
+            float d = (float) ((Math.Abs(A*clckX + B*clckY + C)) / Math.Sqrt(A*A + B*B));
+
             //Проверка клика по линии (или на расстоянии r от линии)
-            if (clckX < Math.Max(line.A.X, line.B.X) && clckX > Math.Min(line.A.X, line.B.X) &&
-                clckY < Math.Max(line.A.Y, line.B.Y) && clckY > Math.Min(line.A.Y, line.B.Y) &&
-                clckY - clckX * k - b < r && clckY - clckX * k - b > -r)
-            {
-                line.isSelected = true;
-                line.A.isSelected = false;
-                line.B.isSelected = false;
-            }
+            if (clckX < Math.Max(line.A.X, line.B.X) + r && clckX > Math.Min(line.A.X, line.B.X) - r &&
+                clckY < Math.Max(line.A.Y, line.B.Y) + r && clckY > Math.Min(line.A.Y, line.B.Y) - r &&
+                d < r)//clckY - clckX * k - b < r && clckY - clckX * k - b > -r)
+                return true;
 
             //Проверка клика по точке
             if (line.A.CheckSelection(clckX, clckY))
-            {
-                line.isSelected = true;
-                line.A.isSelected = true;
-                line.B.isSelected = false;
-            }
+                return true;
 
             if (line.B.CheckSelection(clckX, clckY))
+                return true;
+
+            return false;
+        }
+
+        public override bool ChangeSelection(float x, float y)
+        {
+            isSelected = CheckSelection(x, y);
+
+            if (isSelected)
             {
-                line.isSelected = true;
-                line.A.isSelected = false;
-                line.B.isSelected = true;
+                A.ChangeSelection(x, y);
+                B.ChangeSelection(x, y);
             }
 
             return isSelected;
         }
+
+
 
         public override void DrawObject(Graphics graphics, Pen pen, Brush brush)
         {
@@ -85,6 +99,24 @@ namespace _2pointsNET4_8
             A.DrawObject(graphics, pen, brush);
 
             B.DrawObject(graphics, pen, brush);
+        }
+
+        //TODO: понять, как получить реальную высоту объекта graphics
+        public override string GetInfo(Size size)
+        {
+            //Параметры прямой
+            float A = -1, B = -1, C = -1;
+
+            //Координаты точек
+            float Ax = this.A.X, Ay = size.Height - this.A.Y;
+            float Bx = this.B.X, By = size.Height - this.B.Y;
+
+            //Вычисляем параметры прямой
+            A = Ay - By;
+            B = Bx - Ax;
+            C = Ax * By - Ay * Bx;
+            //return "x:" + this.A.X.ToString() + " y: " + this.A.Y.ToString();
+            return "A:" + A.ToString() + " B: " + B.ToString() + " C: " + C.ToString();
         }
     }
 }
