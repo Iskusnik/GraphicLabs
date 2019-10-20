@@ -33,7 +33,7 @@
             this.panelButtons = new System.Windows.Forms.Panel();
             this.buttonDel = new System.Windows.Forms.Button();
             this.button2PointsLine = new System.Windows.Forms.Button();
-            this.textBox1 = new System.Windows.Forms.TextBox();
+            this.textBox1 = new System.Windows.Forms.RichTextBox();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainerMain)).BeginInit();
             this.splitContainerMain.Panel1.SuspendLayout();
             this.splitContainerMain.Panel2.SuspendLayout();
@@ -86,7 +86,7 @@
             // 
             // buttonDel
             // 
-            this.buttonDel.Location = new System.Drawing.Point(29, 82);
+            this.buttonDel.Location = new System.Drawing.Point(29, 118);
             this.buttonDel.Name = "buttonDel";
             this.buttonDel.Size = new System.Drawing.Size(195, 23);
             this.buttonDel.TabIndex = 1;
@@ -96,7 +96,7 @@
             // 
             // button2PointsLine
             // 
-            this.button2PointsLine.Location = new System.Drawing.Point(29, 53);
+            this.button2PointsLine.Location = new System.Drawing.Point(29, 89);
             this.button2PointsLine.Name = "button2PointsLine";
             this.button2PointsLine.Size = new System.Drawing.Size(195, 23);
             this.button2PointsLine.TabIndex = 0;
@@ -109,8 +109,9 @@
             this.textBox1.Location = new System.Drawing.Point(29, 27);
             this.textBox1.Name = "textBox1";
             this.textBox1.ReadOnly = true;
-            this.textBox1.Size = new System.Drawing.Size(195, 20);
+            this.textBox1.Size = new System.Drawing.Size(195, 56);
             this.textBox1.TabIndex = 2;
+            this.textBox1.Text = "";
             // 
             // FormMain
             // 
@@ -126,7 +127,6 @@
             this.splitContainerMain.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.panelButtons.ResumeLayout(false);
-            this.panelButtons.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -138,7 +138,7 @@
         private System.Windows.Forms.Panel panelButtons;
         private System.Windows.Forms.Button button2PointsLine;
         private System.Windows.Forms.Button buttonDel;
-        private System.Windows.Forms.TextBox textBox1;
+        private System.Windows.Forms.RichTextBox textBox1;
     }
 }
 

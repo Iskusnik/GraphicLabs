@@ -13,7 +13,8 @@ namespace _2pointsNET4_8
     //TODO: Добавить вывод информации о выбранном объекте
     public partial class FormMain : Form
     {
-        List<GraphicObject> graphicObjects = new List<GraphicObject>(10);
+        //List<GraphicObject> allGraphicObjects = new List<GraphicObject>(10);
+        List<GraphicObject> selectableGraphicObjects = new List<GraphicObject>(10);
         bool isMouseDown = false;
         GraphicObject selectedObj = null;
         PointF selectedPoint;
@@ -22,7 +23,7 @@ namespace _2pointsNET4_8
         int selectMode = -1;
 
         //Координаты курсора
-        float hoverX, hoverY;
+        //float hoverX, hoverY;
 
         public FormMain()
         {
@@ -32,7 +33,7 @@ namespace _2pointsNET4_8
 
         private void button2PointsLine_Click(object sender, EventArgs e)
         {
-            graphicObjects.Add(new Line(pictureBox1.Width, pictureBox1.Height));
+            selectableGraphicObjects.Add(new Line(pictureBox1.Width, pictureBox1.Height));
             Refresh();
         }
 
@@ -41,7 +42,7 @@ namespace _2pointsNET4_8
             Pen specPen = new Pen(Color.OrangeRed, 3);
             SolidBrush solidBrushSpec = new SolidBrush(Color.Orange);
 
-            foreach (var obj in graphicObjects)
+            foreach (var obj in selectableGraphicObjects)
             {
                 if (obj is Line)
                 {
@@ -66,7 +67,7 @@ namespace _2pointsNET4_8
             float clckY = e.Location.Y;
             selectedPoint = new GraphicPoint(clckX, clckY);
 
-            foreach (var obj in graphicObjects)
+            foreach (var obj in selectableGraphicObjects)
             {
                 if (obj is Line)
                     if ((obj as Line).ChangeSelection(clckX, clckY))
@@ -90,7 +91,7 @@ namespace _2pointsNET4_8
             float hoverX = e.Location.X;
             float hoverY = e.Location.Y;
             GraphicObject hoveredObj = null;
-            foreach (var obj in graphicObjects)
+            foreach (var obj in selectableGraphicObjects)
                 if (obj is Line)
                     if ((obj as Line).CheckSelection(hoverX, hoverY))
                     {
@@ -145,7 +146,7 @@ namespace _2pointsNET4_8
 
         private void buttonDel_Click(object sender, EventArgs e)
         {
-            graphicObjects.Remove(selectedObj);
+            selectableGraphicObjects.Remove(selectedObj);
             selectedObj = null;
             Refresh();
         }
