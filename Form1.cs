@@ -18,6 +18,7 @@ namespace _2pointsNET4_8
         bool isMouseDown = false;
         GraphicObject selectedObj = null;
         PointF selectedPoint;
+        int key = -1;
         //-1 - ничего
         //1 - что-то
         int selectMode = -1;
@@ -52,6 +53,13 @@ namespace _2pointsNET4_8
                     else
                         line.DrawObject(e.Graphics, specPen, solidBrushSpec);
                 }
+                if (obj is GraphicGroup)
+                {
+                    if (obj != selectedObj)
+                        obj.DrawObject(e.Graphics, null, null);
+                    else
+                        obj.DrawObject(e.Graphics, specPen, solidBrushSpec);
+                }
             }
         }
 
@@ -59,30 +67,60 @@ namespace _2pointsNET4_8
         private void pictureBox1_MouseDown(object sender, MouseEventArgs e)
         {
             isMouseDown = true;
-            selectMode = -1;
+            //selectMode = -1;
 
 
             //Координаты клика
             float clckX = e.Location.X;
             float clckY = e.Location.Y;
-            selectedPoint = new GraphicPoint(clckX, clckY);
 
-            foreach (var obj in selectableGraphicObjects)
+            if (selectMode != 1)
             {
-                if (obj is Line)
-                    if ((obj as Line).ChangeSelection(clckX, clckY))
-                    {
-                        selectedObj = obj;
-                        selectMode = 1;
+                
+                selectedPoint = new GraphicPoint(clckX, clckY);
+                selectedObj = null;
+
+                foreach (var obj in selectableGraphicObjects)
+                {
+
+                    if (obj.ChangeSelection(clckX, clckY))
+                        if (selectMode == -1)
+                            selectedObj = obj;
+                        //selectMode = 1;
+                            
+
+                    /*if (obj is Line)
+                        if ((obj as Line).ChangeSelection(clckX, clckY))
+                        {
+                            selectedObj = obj;
+                            selectMode = 1;
+                        }
+
+                 key = -1;
+                        if (System.Windows.Input.Keyboard.IsKeyDown(System.Windows.Input.Key.LeftCtrl))
+                        {
+                            if (key == (int)System.Windows.Input.Key.LeftCtrl)
+                                ;
+
+                            key = (int)System.Windows.Input.Key.LeftCtrl;
+                        };
+                    else
                     }
+                 */
+                }
             }
+            if (selectMode == 1 && selectedObj is GraphicGroup)
+                foreach (var obj in selectableGraphicObjects)
+                    if (obj.CheckSelection(clckX, clckY))
+                        (selectedObj as GraphicGroup).Add(obj);
+            
         }
 
         //Очистка от данных после сканирования
         private void pictureBox1_MouseUp(object sender, MouseEventArgs e)
         {
             isMouseDown = false;
-            selectMode = -1;
+            //selectMode = -1;
         }
 
         //Передвижение объекта
@@ -109,7 +147,7 @@ namespace _2pointsNET4_8
 
 
 
-            if (isMouseDown == true && selectMode != -1)
+            if (isMouseDown == true && selectMode == -1)
             {
                 if (selectedObj is Line)
                 {
@@ -135,22 +173,81 @@ namespace _2pointsNET4_8
                         selectedPoint = new PointF(e.Location.X, e.Location.Y);
                     }
                 }
-
+                if (selectedObj is GraphicGroup)
+                {
+                    float dx = e.Location.X - selectedPoint.X;
+                    float dy = e.Location.Y - selectedPoint.Y;
+                    selectedObj.MoveObject(dx, dy);
+                    selectedPoint = new PointF(e.Location.X, e.Location.Y);
+                }
                 Refresh();
             }
             else
             {
-
+                Refresh();
             }
+            Refresh();
+
+            textBox1.Text += selectMode.ToString();
         }
 
         private void buttonDel_Click(object sender, EventArgs e)
         {
-            selectableGraphicObjects.Remove(selectedObj);
-            selectedObj = null;
-            Refresh();
+            if (selectMode == -1)
+            {
+                selectableGraphicObjects.Remove(selectedObj);
+                selectedObj = null;
+                Refresh();
+            }
+            else if (selectMode == 2 && selectedObj is GraphicGroup)
+            {
+                foreach (var obj in (selectedObj as GraphicGroup).objectsGroup)
+                    if (obj != null)
+                        selectableGraphicObjects.Add(obj);
+
+                selectableGraphicObjects.Remove(selectedObj);
+                selectedObj = null;
+                selectMode = -1;
+                Refresh();
+            }
         }
 
-        
+        private void FormMain_KeyDown(object sender, KeyEventArgs e)
+        {
+
+            if (e.KeyCode == Keys.ControlKey)
+                if (selectMode != 1)
+                {
+                    selectMode = 1;
+                    selectedObj = new GraphicGroup();
+                    //textBox1.Text += "ctrl pressed";
+                }
+
+            if (e.KeyCode == Keys.ShiftKey)
+                if (selectMode != 2)
+                    selectMode = 2;
+        }
+
+        private void FormMain_KeyUp(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.ControlKey)
+                if (selectMode == 1)
+                {
+                    selectMode = -1;
+
+                    if (selectedObj != null)
+                    {
+                        selectableGraphicObjects.Add(selectedObj);
+
+                        foreach (var obj in (selectedObj as GraphicGroup).objectsGroup)
+                            selectableGraphicObjects.Remove(obj);
+                    }
+                    //textBox1.Text += "ctrl unpressed";
+                }
+
+            if (e.KeyCode == Keys.ShiftKey)
+                if (selectMode == 2)
+                    selectMode = -1;
+        }
     }
 }

@@ -65,6 +65,11 @@ namespace _2pointsNET4_8
             return "X:" + X.ToString() + " Y: " + (size.Height - Y).ToString();
         }
 
-        
+        public override void MoveObject(float X, float Y)
+        {
+            float x = point.X + X;
+            float y = point.Y + Y;
+            point = new PointF(x, y);
+        }
     }
 }

@@ -21,6 +21,12 @@ namespace _2pointsNET4_8
             objectsGroup = group;
         }
 
+        public void Add(GraphicObject graphicObject)
+        {
+            if (!objectsGroup.Contains(graphicObject))
+                objectsGroup.Add(graphicObject);
+        }
+
         public void EmptyGroup(List<GraphicObject> group)
         {
             objectsGroup = new List<GraphicObject>(10);
@@ -55,6 +61,12 @@ namespace _2pointsNET4_8
             for (int i = 0; i < objectsGroup.Count; i++)
                 info += objectsGroup[i].GetInfo(size)+"\n";
             return info;
+        }
+
+        public override void MoveObject(float X, float Y)
+        {
+            for (int i = 0; i < objectsGroup.Count; i++)
+                objectsGroup[i].MoveObject(X, Y);
         }
     }
 }

@@ -118,5 +118,11 @@ namespace _2pointsNET4_8
             //return "x:" + this.A.X.ToString() + " y: " + this.A.Y.ToString();
             return "A:" + A.ToString() + " B: " + B.ToString() + " C: " + C.ToString();
         }
+
+        public override void MoveObject(float X, float Y)
+        {
+            A.MoveObject(X, Y);
+            B.MoveObject(X, Y);
+        }
     }
 }
