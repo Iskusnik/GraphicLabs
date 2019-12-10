@@ -196,8 +196,8 @@ namespace _2pointsNET4_8
                         float dx = e.Location.X - selectedPoint.X;
                         float dy = e.Location.Y - selectedPoint.Y;
 
-                        (selectedObj as Line).A.point = new PointF((selectedObj as Line).A.X + dx, (selectedObj as Line).A.Y + dy);
-                        (selectedObj as Line).B.point = new PointF((selectedObj as Line).B.X + dx, (selectedObj as Line).B.Y + dy);
+                        (selectedObj as Line).A.point = new PointF((selectedObj as Line).A.point.X + dx, (selectedObj as Line).A.point.Y + dy);
+                        (selectedObj as Line).B.point = new PointF((selectedObj as Line).B.point.X + dx, (selectedObj as Line).B.point.Y + dy);
 
                         selectedPoint = new PointF(e.Location.X, e.Location.Y);
                     }
@@ -306,7 +306,7 @@ namespace _2pointsNET4_8
             cm.ItemClicked += new ToolStripItemClickedEventHandler(contexMenu_ItemClicked);
             cm.Opening += new CancelEventHandler(contexMenu_Opening);
 
-            //GraphicObject.NullPoint = new PointF(0, pictureBox1.Size.Height);
+            GraphicObject.NullPoint = new PointF(pictureBox1.Size.Width/2, pictureBox1.Size.Height/2);
             // ...
 
 
@@ -325,15 +325,13 @@ namespace _2pointsNET4_8
             {
                 case "X:":
                     {
-                        PointF point = new PointF(result, rcmPoint.Y);
-                        rcmPoint.point = point;
+                        rcmPoint.X = result;
 
                         break;
                     }
                 case "Y:":
                     {
-                        PointF point = new PointF(rcmPoint.X, result);
-                        rcmPoint.point = point;
+                        rcmPoint.Y = result;
                         break;
                     }
                 case "Z:":

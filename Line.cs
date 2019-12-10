@@ -40,13 +40,13 @@ namespace _2pointsNET4_8
 
 
 
-            float k = (line.B.Y - line.A.Y) / (line.B.X - line.A.X);
-            float b = (-line.A.X * (line.B.Y - line.A.Y) / (line.B.X - line.A.X)) + line.A.Y;
+            float k = (line.B.point.Y - line.A.point.Y) / (line.B.point.X - line.A.point.X);
+            float b = (-line.A.point.X * (line.B.point.Y - line.A.point.Y) / (line.B.point.X - line.A.point.X)) + line.A.point.Y;
             
 
             //Координаты точек
-            float Ax = this.A.X, Ay = this.A.Y;
-            float Bx = this.B.X, By = this.B.Y;
+            float Ax = this.A.point.X, Ay = this.A.point.Y;
+            float Bx = this.B.point.X, By = this.B.point.Y;
 
             //Вычисляем параметры прямой
             float A = Ay - By;
@@ -94,7 +94,7 @@ namespace _2pointsNET4_8
                 brush = new SolidBrush(Color.Green);
 
             float r = GraphicPoint.pointR;
-            graphics.DrawLine(pen, A, B);
+            graphics.DrawLine(pen, A.point, B.point);
 
             A.DrawObject(graphics, pen, brush);
 

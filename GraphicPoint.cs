@@ -12,8 +12,24 @@ namespace _2pointsNET4_8
     {
         public static int pointR = 5;
         public PointF point { get; set; }
-        public float X { get { return point.X - GraphicObject.NullPoint.X; } }
-        public float Y { get { return -point.Y + GraphicObject.NullPoint.Y; } }
+        public float X 
+        { 
+            get { return point.X - GraphicObject.NullPoint.X; }
+            set
+            {
+                float temp = value + GraphicObject.NullPoint.X;
+                point = new PointF(temp, point.Y);
+            }
+        }
+        public float Y 
+        { 
+            get { return -point.Y + GraphicObject.NullPoint.Y; }
+            set
+            {
+                float temp = -value + GraphicObject.NullPoint.Y;
+                point = new PointF(point.X, temp);
+            }
+        }
 
         private float z;
         public float Z { get { return z - GraphicObject.NullZ; } set { z = value; } }
@@ -66,7 +82,7 @@ namespace _2pointsNET4_8
 
         public override string GetInfo(Size size)
         {
-            return "X:" + X.ToString() + " Y: " + (Y).ToString() + " Z: " + (Z).ToString();
+            return "X:" + X.ToString() + " Y: " + Y.ToString() + " Z: " + (Z).ToString();
         }
 
         //depricated
@@ -77,8 +93,8 @@ namespace _2pointsNET4_8
 
         public override void MoveObject(float X, float Y)
         {
-            float x = point.X + X;
-            float y = point.Y + Y;
+            float x = this.X + X;
+            float y = this.Y + Y;
             point = new PointF(x, y);
         }
     }
