@@ -9,6 +9,9 @@ namespace _2pointsNET4_8
 {
     abstract class GraphicObject
     {
+        public static PointF NullPoint = new PointF(0, 0);
+
+        public static float NullZ = 1;
         public bool isSelected { get; set; }
 
         abstract public bool CheckSelection(float x, float y);

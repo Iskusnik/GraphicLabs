@@ -57,7 +57,7 @@ namespace _2pointsNET4_8
 
         public override string GetInfo(Size size)
         {
-            string info = "Группа:";
+            string info = "Группа:\n";
             for (int i = 0; i < objectsGroup.Count; i++)
                 info += objectsGroup[i].GetInfo(size)+"\n";
             return info;

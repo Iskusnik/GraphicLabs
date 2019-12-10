@@ -31,9 +31,11 @@
             this.splitContainerMain = new System.Windows.Forms.SplitContainer();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.panelButtons = new System.Windows.Forms.Panel();
+            this.richTextBox1 = new System.Windows.Forms.RichTextBox();
             this.textBox1 = new System.Windows.Forms.RichTextBox();
             this.buttonDel = new System.Windows.Forms.Button();
             this.button2PointsLine = new System.Windows.Forms.Button();
+            this.buttonDeleteGrouping = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainerMain)).BeginInit();
             this.splitContainerMain.Panel1.SuspendLayout();
             this.splitContainerMain.Panel2.SuspendLayout();
@@ -75,6 +77,8 @@
             // 
             // panelButtons
             // 
+            this.panelButtons.Controls.Add(this.buttonDeleteGrouping);
+            this.panelButtons.Controls.Add(this.richTextBox1);
             this.panelButtons.Controls.Add(this.textBox1);
             this.panelButtons.Controls.Add(this.buttonDel);
             this.panelButtons.Controls.Add(this.button2PointsLine);
@@ -83,6 +87,16 @@
             this.panelButtons.Name = "panelButtons";
             this.panelButtons.Size = new System.Drawing.Size(246, 450);
             this.panelButtons.TabIndex = 0;
+            // 
+            // richTextBox1
+            // 
+            this.richTextBox1.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.richTextBox1.Location = new System.Drawing.Point(0, 384);
+            this.richTextBox1.Name = "richTextBox1";
+            this.richTextBox1.ReadOnly = true;
+            this.richTextBox1.Size = new System.Drawing.Size(246, 66);
+            this.richTextBox1.TabIndex = 3;
+            this.richTextBox1.Text = "Ctrl + click - выделение объектов в группу\nShift + Удалить - разбить группу";
             // 
             // textBox1
             // 
@@ -113,6 +127,16 @@
             this.button2PointsLine.UseVisualStyleBackColor = true;
             this.button2PointsLine.Click += new System.EventHandler(this.button2PointsLine_Click);
             // 
+            // buttonDeleteGrouping
+            // 
+            this.buttonDeleteGrouping.Location = new System.Drawing.Point(29, 147);
+            this.buttonDeleteGrouping.Name = "buttonDeleteGrouping";
+            this.buttonDeleteGrouping.Size = new System.Drawing.Size(195, 23);
+            this.buttonDeleteGrouping.TabIndex = 4;
+            this.buttonDeleteGrouping.Text = "Разбить группу";
+            this.buttonDeleteGrouping.UseVisualStyleBackColor = true;
+            this.buttonDeleteGrouping.Click += new System.EventHandler(this.buttonDeleteGrouping_Click);
+            // 
             // FormMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -122,6 +146,7 @@
             this.KeyPreview = true;
             this.Name = "FormMain";
             this.Text = "X";
+            this.Load += new System.EventHandler(this.FormMain_Load);
             this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.FormMain_KeyDown);
             this.KeyUp += new System.Windows.Forms.KeyEventHandler(this.FormMain_KeyUp);
             this.splitContainerMain.Panel1.ResumeLayout(false);
@@ -142,6 +167,8 @@
         private System.Windows.Forms.Button button2PointsLine;
         private System.Windows.Forms.Button buttonDel;
         private System.Windows.Forms.RichTextBox textBox1;
+        private System.Windows.Forms.RichTextBox richTextBox1;
+        private System.Windows.Forms.Button buttonDeleteGrouping;
     }
 }
 

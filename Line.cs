@@ -55,8 +55,8 @@ namespace _2pointsNET4_8
             float d = (float) ((Math.Abs(A*clckX + B*clckY + C)) / Math.Sqrt(A*A + B*B));
 
             //Проверка клика по линии (или на расстоянии r от линии)
-            if (clckX < Math.Max(line.A.X, line.B.X) + r && clckX > Math.Min(line.A.X, line.B.X) - r &&
-                clckY < Math.Max(line.A.Y, line.B.Y) + r && clckY > Math.Min(line.A.Y, line.B.Y) - r &&
+            if (clckX < Math.Max(line.A.point.X, line.B.point.X) + r && clckX > Math.Min(line.A.point.X, line.B.point.X) - r &&
+                clckY < Math.Max(line.A.point.Y, line.B.point.Y) + r && clckY > Math.Min(line.A.point.Y, line.B.point.Y) - r &&
                 d < r)//clckY - clckX * k - b < r && clckY - clckX * k - b > -r)
                 return true;
 
@@ -108,15 +108,19 @@ namespace _2pointsNET4_8
             float A = -1, B = -1, C = -1;
 
             //Координаты точек
-            float Ax = this.A.X, Ay = size.Height - this.A.Y;
-            float Bx = this.B.X, By = size.Height - this.B.Y;
+            float Ax = this.A.X, Ay = this.A.Y;//size.Height - this.A.Y;
+            float Bx = this.B.X, By = this.B.Y;// size.Height - this.B.Y;
 
             //Вычисляем параметры прямой
             A = Ay - By;
             B = Bx - Ax;
             C = Ax * By - Ay * Bx;
             //return "x:" + this.A.X.ToString() + " y: " + this.A.Y.ToString();
-            return "A:" + A.ToString() + " B: " + B.ToString() + " C: " + C.ToString();
+            string pointA = this.A.GetInfo(size);
+            string pointB = this.B.GetInfo(size);
+
+            return "A:" + A.ToString() + " B: " + B.ToString() + " C: " + C.ToString() + "\n" +
+                    "Точка А: " + pointA + "\n" + "Точка B: " + pointB + "\n";
         }
 
         public override void MoveObject(float X, float Y)

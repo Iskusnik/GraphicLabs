@@ -16,8 +16,10 @@ namespace _2pointsNET4_8
         //List<GraphicObject> allGraphicObjects = new List<GraphicObject>(10);
         List<GraphicObject> selectableGraphicObjects = new List<GraphicObject>(10);
         bool isMouseDown = false;
+        bool isRightClickLast = false;
         GraphicObject selectedObj = null;
         PointF selectedPoint;
+        GraphicPoint rcmPoint = null;
         int key = -1;
         //-1 - ничего
         //1 - что-то
@@ -28,7 +30,6 @@ namespace _2pointsNET4_8
 
         public FormMain()
         {
-            
             InitializeComponent();
         }
 
@@ -60,7 +61,10 @@ namespace _2pointsNET4_8
                     else
                         obj.DrawObject(e.Graphics, specPen, solidBrushSpec);
                 }
+                if (!(selectedObj is null))
+                    selectedObj.DrawObject(e.Graphics, specPen, solidBrushSpec);
             }
+
         }
 
         //Сканирование рисунка на клик по объекту
@@ -76,7 +80,7 @@ namespace _2pointsNET4_8
 
             if (selectMode != 1)
             {
-                
+
                 selectedPoint = new GraphicPoint(clckX, clckY);
                 selectedObj = null;
 
@@ -86,8 +90,8 @@ namespace _2pointsNET4_8
                     if (obj.ChangeSelection(clckX, clckY))
                         if (selectMode == -1)
                             selectedObj = obj;
-                        //selectMode = 1;
-                            
+                    //selectMode = 1;
+
 
                     /*if (obj is Line)
                         if ((obj as Line).ChangeSelection(clckX, clckY))
@@ -108,13 +112,33 @@ namespace _2pointsNET4_8
                     }
                  */
                 }
+                if (e.Button == MouseButtons.Right &&
+                    selectedObj != null &&
+                    ((selectedObj as Line).A.isSelected || (selectedObj as Line).B.isSelected))
+                {
+                    GraphicPoint selectedPoint = (selectedObj as Line).A.isSelected ? (selectedObj as Line).A : (selectedObj as Line).B;
+                    pictureBox1.ContextMenuStrip.Items[0].Text = "X: " + selectedPoint.X.ToString();
+                    pictureBox1.ContextMenuStrip.Items[1].Text = "Y: " + selectedPoint.Y.ToString();
+                    pictureBox1.ContextMenuStrip.Items[2].Text = "Z: " + selectedPoint.Z.ToString();
+                    isMouseDown = false;
+                    isRightClickLast = true;
+                    rcmPoint = selectedPoint;
+                }
+                else
+                {
+                    pictureBox1.ContextMenuStrip.Visible = false;
+                    isRightClickLast = false;
+                    rcmPoint = null;
+                }
             }
             if (selectMode == 1 && selectedObj is GraphicGroup)
                 foreach (var obj in selectableGraphicObjects)
                     if (obj.CheckSelection(clckX, clckY))
                         (selectedObj as GraphicGroup).Add(obj);
+
             
         }
+                
 
         //Очистка от данных после сканирования
         private void pictureBox1_MouseUp(object sender, MouseEventArgs e)
@@ -130,6 +154,7 @@ namespace _2pointsNET4_8
             float hoverY = e.Location.Y;
             GraphicObject hoveredObj = null;
             foreach (var obj in selectableGraphicObjects)
+            {
                 if (obj is Line)
                     if ((obj as Line).CheckSelection(hoverX, hoverY))
                     {
@@ -140,10 +165,14 @@ namespace _2pointsNET4_8
                             if ((hoveredObj as Line).B.CheckSelection(hoverX, hoverY))
                             hoveredObj = (hoveredObj as Line).B;
                     }
+                if (obj is GraphicGroup)
+                    if ((obj as GraphicGroup).CheckSelection(hoverX, hoverY))
+                        hoveredObj = obj;
+            }
             if (hoveredObj != null)
                 textBox1.Text = hoveredObj.GetInfo(pictureBox1.Size);
             else
-                textBox1.Text = "";
+                ;//textBox1.Text = "";
 
 
 
@@ -188,7 +217,7 @@ namespace _2pointsNET4_8
             }
             Refresh();
 
-            textBox1.Text += selectMode.ToString();
+            //textBox1.Text += selectMode.ToString();
         }
 
         private void buttonDel_Click(object sender, EventArgs e)
@@ -212,9 +241,11 @@ namespace _2pointsNET4_8
             }
         }
 
+        //Сtrl = собрать группу
+        //Shift = разбить группу
         private void FormMain_KeyDown(object sender, KeyEventArgs e)
         {
-
+            
             if (e.KeyCode == Keys.ControlKey)
                 if (selectMode != 1)
                 {
@@ -248,6 +279,80 @@ namespace _2pointsNET4_8
             if (e.KeyCode == Keys.ShiftKey)
                 if (selectMode == 2)
                     selectMode = -1;
+        }
+
+        private void buttonDeleteGrouping_Click(object sender, EventArgs e)
+        {
+            if (selectMode == -1 && selectedObj is GraphicGroup)
+            {
+                
+                foreach (var obj in (selectedObj as GraphicGroup).objectsGroup)
+                    if (obj != null)
+                        selectableGraphicObjects.Add(obj);
+
+                selectableGraphicObjects.Remove(selectedObj);
+                selectedObj = null;
+                selectMode = -1;
+                Refresh();
+            }
+        }
+
+        private void FormMain_Load(object sender, EventArgs e)
+        {
+            ContextMenuStrip cm = new ContextMenuStrip();
+            cm.Items.Add("X");
+            cm.Items.Add("Y");
+            cm.Items.Add("Z");
+            cm.ItemClicked += new ToolStripItemClickedEventHandler(contexMenu_ItemClicked);
+            cm.Opening += new CancelEventHandler(contexMenu_Opening);
+
+            //GraphicObject.NullPoint = new PointF(0, pictureBox1.Size.Height);
+            // ...
+
+
+            pictureBox1.ContextMenuStrip = cm;
+        }
+
+
+
+        void contexMenu_ItemClicked(object sender, ToolStripItemClickedEventArgs e)
+        {
+            ToolStripItem item = e.ClickedItem;
+            string[] info = item.Text.Split(' ');
+            int result = ReturnNumericDialog.ShowDialog(info[0], info[1]);
+            
+            switch(info[0])
+            {
+                case "X:":
+                    {
+                        PointF point = new PointF(result, rcmPoint.Y);
+                        rcmPoint.point = point;
+
+                        break;
+                    }
+                case "Y:":
+                    {
+                        PointF point = new PointF(rcmPoint.X, result);
+                        rcmPoint.point = point;
+                        break;
+                    }
+                case "Z:":
+                    {
+                        rcmPoint.Z = result;
+                        break;
+                    }
+
+            }
+            Refresh();
+        }
+
+        void contexMenu_Opening(object sender, CancelEventArgs e)
+        {
+            if (isRightClickLast)
+                e.Cancel = false;
+            else
+                e.Cancel = true;
+            // your code here
         }
     }
 }
