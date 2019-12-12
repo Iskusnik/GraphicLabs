@@ -15,6 +15,11 @@ namespace _2pointsNET4_8
         public GraphicPoint A { get; set; }
         public GraphicPoint B { get; set; }
 
+        public Line(PointF A, PointF B)
+        {
+            this.A = new GraphicPoint(A.X, A.Y);
+            this.B = new GraphicPoint(B.X, B.Y);
+        }
         public Line(int maxX, int maxY)
         {
             int x = rand.Next(0, maxX);

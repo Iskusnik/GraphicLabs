@@ -63,10 +63,51 @@ namespace _2pointsNET4_8
                 }
                 if (!(selectedObj is null))
                     selectedObj.DrawObject(e.Graphics, specPen, solidBrushSpec);
+
+                
             }
 
-        }
+            if (checkBoxAxes.Checked)
+            {
+                float nullX = GraphicObject.NullPoint.X;
+                float nullY = GraphicObject.NullPoint.Y;
+                float nullZ = GraphicObject.NullZ;
+                Line[] axes = GetAxes(nullX, nullY, nullZ);
 
+                for (int i = 0; i < 3; i++)
+                {
+                    switch (i)
+                    {
+                        case 0: specPen = new Pen(Color.LightBlue, 1); solidBrushSpec = new SolidBrush(Color.LightBlue); break;
+                        case 1: specPen = new Pen(Color.PaleVioletRed, 1); solidBrushSpec = new SolidBrush(Color.PaleVioletRed); break;
+                        case 2: specPen = new Pen(Color.LightGreen, 1); solidBrushSpec = new SolidBrush(Color.LightGreen); break;
+                    }
+                    axes[i].DrawObject(e.Graphics, specPen, solidBrushSpec);
+                } 
+            }
+        }
+        private Line[] GetAxes(float x, float y, float z)
+        {
+            Line[] lines = new Line[3];
+
+            //TODO: перевычислить X и Y относительно матрицы изменений
+
+            PointF nullPointX1 = new PointF(x + 10000, y);
+            PointF nullPointX2 = new PointF(x - 10000, y);
+
+            PointF nullPointY1 = new PointF(x, y + 10000);
+            PointF nullPointY2 = new PointF(x, y - 10000);
+
+
+            PointF nullPointZ = new PointF(x, y);
+            lines[0] = new Line(nullPointX1, nullPointX2);
+            lines[1] = new Line(nullPointY1, nullPointY2);
+            lines[2] = new Line(nullPointZ, nullPointZ);
+
+
+            return lines;
+            //throw new NotImplementedException();
+        }
         //Сканирование рисунка на клик по объекту
         private void pictureBox1_MouseDown(object sender, MouseEventArgs e)
         {
@@ -351,6 +392,11 @@ namespace _2pointsNET4_8
             else
                 e.Cancel = true;
             // your code here
+        }
+
+        private void checkBoxAxes_CheckedChanged(object sender, EventArgs e)
+        {
+            pictureBox1.Refresh();
         }
     }
 }

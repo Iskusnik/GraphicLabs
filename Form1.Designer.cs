@@ -31,11 +31,12 @@
             this.splitContainerMain = new System.Windows.Forms.SplitContainer();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.panelButtons = new System.Windows.Forms.Panel();
+            this.buttonDeleteGrouping = new System.Windows.Forms.Button();
             this.richTextBox1 = new System.Windows.Forms.RichTextBox();
             this.textBox1 = new System.Windows.Forms.RichTextBox();
             this.buttonDel = new System.Windows.Forms.Button();
             this.button2PointsLine = new System.Windows.Forms.Button();
-            this.buttonDeleteGrouping = new System.Windows.Forms.Button();
+            this.checkBoxAxes = new System.Windows.Forms.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainerMain)).BeginInit();
             this.splitContainerMain.Panel1.SuspendLayout();
             this.splitContainerMain.Panel2.SuspendLayout();
@@ -77,6 +78,7 @@
             // 
             // panelButtons
             // 
+            this.panelButtons.Controls.Add(this.checkBoxAxes);
             this.panelButtons.Controls.Add(this.buttonDeleteGrouping);
             this.panelButtons.Controls.Add(this.richTextBox1);
             this.panelButtons.Controls.Add(this.textBox1);
@@ -87,6 +89,16 @@
             this.panelButtons.Name = "panelButtons";
             this.panelButtons.Size = new System.Drawing.Size(246, 450);
             this.panelButtons.TabIndex = 0;
+            // 
+            // buttonDeleteGrouping
+            // 
+            this.buttonDeleteGrouping.Location = new System.Drawing.Point(29, 147);
+            this.buttonDeleteGrouping.Name = "buttonDeleteGrouping";
+            this.buttonDeleteGrouping.Size = new System.Drawing.Size(195, 23);
+            this.buttonDeleteGrouping.TabIndex = 4;
+            this.buttonDeleteGrouping.Text = "Разбить группу";
+            this.buttonDeleteGrouping.UseVisualStyleBackColor = true;
+            this.buttonDeleteGrouping.Click += new System.EventHandler(this.buttonDeleteGrouping_Click);
             // 
             // richTextBox1
             // 
@@ -127,15 +139,16 @@
             this.button2PointsLine.UseVisualStyleBackColor = true;
             this.button2PointsLine.Click += new System.EventHandler(this.button2PointsLine_Click);
             // 
-            // buttonDeleteGrouping
+            // checkBoxAxes
             // 
-            this.buttonDeleteGrouping.Location = new System.Drawing.Point(29, 147);
-            this.buttonDeleteGrouping.Name = "buttonDeleteGrouping";
-            this.buttonDeleteGrouping.Size = new System.Drawing.Size(195, 23);
-            this.buttonDeleteGrouping.TabIndex = 4;
-            this.buttonDeleteGrouping.Text = "Разбить группу";
-            this.buttonDeleteGrouping.UseVisualStyleBackColor = true;
-            this.buttonDeleteGrouping.Click += new System.EventHandler(this.buttonDeleteGrouping_Click);
+            this.checkBoxAxes.AutoSize = true;
+            this.checkBoxAxes.Location = new System.Drawing.Point(4, 361);
+            this.checkBoxAxes.Name = "checkBoxAxes";
+            this.checkBoxAxes.Size = new System.Drawing.Size(46, 17);
+            this.checkBoxAxes.TabIndex = 5;
+            this.checkBoxAxes.Text = "Оси";
+            this.checkBoxAxes.UseVisualStyleBackColor = true;
+            this.checkBoxAxes.CheckedChanged += new System.EventHandler(this.checkBoxAxes_CheckedChanged);
             // 
             // FormMain
             // 
@@ -155,6 +168,7 @@
             this.splitContainerMain.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.panelButtons.ResumeLayout(false);
+            this.panelButtons.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -169,6 +183,7 @@
         private System.Windows.Forms.RichTextBox textBox1;
         private System.Windows.Forms.RichTextBox richTextBox1;
         private System.Windows.Forms.Button buttonDeleteGrouping;
+        private System.Windows.Forms.CheckBox checkBoxAxes;
     }
 }
 
