@@ -28,6 +28,8 @@ namespace _2pointsNET4_8
         //Координаты курсора
         //float hoverX, hoverY;
 
+        float[][] Rxyz;
+
         public FormMain()
         {
             InitializeComponent();
@@ -74,42 +76,21 @@ namespace _2pointsNET4_8
                 float nullX = GraphicObject.NullPoint.X;
                 float nullY = GraphicObject.NullPoint.Y;
                 float nullZ = GraphicObject.NullZ;
-                Line[] axes = GetAxes(nullX, nullY, nullZ);
+                Line[] axes = AxisLines;
 
                 for (int i = 0; i < 3; i++)
                 {
                     switch (i)
                     {
-                        case 0: specPen = new Pen(Color.LightBlue, 1); solidBrushSpec = new SolidBrush(Color.LightBlue); break;
-                        case 1: specPen = new Pen(Color.PaleVioletRed, 1); solidBrushSpec = new SolidBrush(Color.PaleVioletRed); break;
-                        case 2: specPen = new Pen(Color.LightGreen, 1); solidBrushSpec = new SolidBrush(Color.LightGreen); break;
+                        case 0: specPen = new Pen(Color.LightBlue, 3); solidBrushSpec = new SolidBrush(Color.LightBlue); break;
+                        case 1: specPen = new Pen(Color.PaleVioletRed, 3); solidBrushSpec = new SolidBrush(Color.PaleVioletRed); break;
+                        case 2: specPen = new Pen(Color.LightGreen, 3); solidBrushSpec = new SolidBrush(Color.LightGreen); break;
                     }
                     axes[i].DrawObject(e.Graphics, specPen, solidBrushSpec);
                 } 
             }
         }
-        private Line[] GetAxes(float x, float y, float z)
-        {
-            Line[] lines = new Line[3];
-
-            //TODO: перевычислить X и Y относительно матрицы изменений
-
-            PointF nullPointX1 = new PointF(x + 10000, y);
-            PointF nullPointX2 = new PointF(x - 10000, y);
-
-            PointF nullPointY1 = new PointF(x, y + 10000);
-            PointF nullPointY2 = new PointF(x, y - 10000);
-
-
-            PointF nullPointZ = new PointF(x, y);
-            lines[0] = new Line(nullPointX1, nullPointX2);
-            lines[1] = new Line(nullPointY1, nullPointY2);
-            lines[2] = new Line(nullPointZ, nullPointZ);
-
-
-            return lines;
-            //throw new NotImplementedException();
-        }
+        
         //Сканирование рисунка на клик по объекту
         private void pictureBox1_MouseDown(object sender, MouseEventArgs e)
         {
@@ -324,8 +305,23 @@ namespace _2pointsNET4_8
                     selectMode = -1;
         }
 
+        bool debugVal = false;
         private void buttonDeleteGrouping_Click(object sender, EventArgs e)
         {
+            /*
+            if (debugVal)
+            {
+                hScrollBar1.Value = 180;
+                vScrollBar1.Value = 180;
+                debugVal = false;
+            }
+            else
+            {
+                hScrollBar1.Value = 225;
+                vScrollBar1.Value = 225;
+                debugVal = true;
+            }*/
+
             if (selectMode == -1 && selectedObj is GraphicGroup)
             {
                 
@@ -348,14 +344,27 @@ namespace _2pointsNET4_8
             cm.Items.Add("Z");
             cm.ItemClicked += new ToolStripItemClickedEventHandler(contexMenu_ItemClicked);
             cm.Opening += new CancelEventHandler(contexMenu_Opening);
+            
+            Rxyz = new float[][]
+            {
+                new float[] {1, 0, 0, 0 },
+                new float[] {0, 1, 0, 0 },
+                new float[] {0, 0, 1, 0 },
+                new float[] {0, 0, 0, 1 },
+            };
 
             GraphicObject.NullPoint = new PointF(pictureBox1.Size.Width/2, pictureBox1.Size.Height/2);
 
             numericUpDownX.Value = pictureBox1.Size.Width / 2;
             numericUpDownY.Value = pictureBox1.Size.Height / 2;
-            numericUpDownZ.Value = 1;
+            numericUpDownZ.Value = 0;
             GlobalColor = pictureBoxColorPicker.BackColor;
             // ...
+            
+
+
+            SetAxes(pictureBox1.Size.Width / 2, pictureBox1.Size.Height / 2, 0);
+
 
 
             pictureBox1.ContextMenuStrip = cm;
@@ -398,7 +407,6 @@ namespace _2pointsNET4_8
                 e.Cancel = false;
             else
                 e.Cancel = true;
-            // your code here
         }
 
         private void checkBoxAxes_CheckedChanged(object sender, EventArgs e)
@@ -409,8 +417,11 @@ namespace _2pointsNET4_8
         
         private void numericUpDown_ValueChanged(object sender, EventArgs e)
         {
-            GraphicObject.NullPoint = new PointF((float)numericUpDownX.Value, pictureBox1.Height - (float)numericUpDownY.Value);
-            GraphicObject.NullZ = (float) numericUpDownZ.Value;
+            GraphicObject.NullPoint = new PointF((float)numericUpDownX.Value, (float)numericUpDownY.Value);
+            GraphicObject.NullZ = (float)numericUpDownZ.Value;
+
+            SetAxes(GraphicObject.NullPoint.X, GraphicObject.NullPoint.Y, GraphicObject.NullZ, Rxyz);
+
             pictureBox1.Refresh();
         }
 
@@ -438,6 +449,292 @@ namespace _2pointsNET4_8
         {
             selectedObj = null;
             selectableGraphicObjects.Clear();
+
+            GraphicObject.NullPoint = new PointF((float)numericUpDownX.Value, (float)numericUpDownY.Value);
+            GraphicObject.NullZ = 1;
+            Rxyz = new float[][]
+            {
+                new float[] {1, 0, 0, 0 },
+                new float[] {0, 1, 0, 0 },
+                new float[] {0, 0, 1, 0 },
+                new float[] {0, 0, 0, 1 },
+            };
+            numericUpDownX.Value = pictureBox1.Size.Width / 2;
+            numericUpDownY.Value = pictureBox1.Size.Height / 2;
+            numericUpDownZ.Value = 1;
+            
+            prevHScrollBar = 1800;
+            prevVScrollBar = 1800;
+
+            hScrollBar1.Value = 1800;
+            vScrollBar1.Value = 1800;
+
+
+
+            SetAxes(GraphicObject.NullPoint.X, GraphicObject.NullPoint.Y, GraphicObject.NullZ);
+
+            pictureBox1.Refresh();
+        }
+
+        float prevHScrollBar = 1800;
+        float prevVScrollBar = 1800;
+        
+
+        Line[] AxisLines = new Line[3];
+        private Line[] SetAxes(float x, float y, float z, float[][] matrix)
+        {
+
+            /**/
+            GraphicPoint gpX1 = new GraphicPoint(1, 1);
+            gpX1.point = new PointF(x + 100000, y);
+            gpX1.z = z;
+            gpX1 = ApplyMatrix(gpX1, matrix);
+            
+
+            GraphicPoint gpX2 = new GraphicPoint(1, 1);
+            gpX2.point = new PointF(x - 100000, y);
+            gpX2.z = z;
+            gpX2 = ApplyMatrix(gpX2, matrix);
+            
+
+            GraphicPoint gpY1 = new GraphicPoint(1, 1);
+            gpY1.point = new PointF(x, y + 100000);
+            gpY1.z = z;
+            gpY1 = ApplyMatrix(gpY1, matrix);
+            
+
+            GraphicPoint gpY2 = new GraphicPoint(1, 1);
+            gpY2.point = new PointF(x, y - 100000);
+            gpY2.z = z;
+            gpY2 = ApplyMatrix(gpY2, matrix);
+            
+
+            GraphicPoint gpZ1 = new GraphicPoint(1, 1);
+            gpZ1.point = new PointF(x, y);
+            gpZ1.z = z + 100000;
+            gpZ1 = ApplyMatrix(gpZ1, matrix);
+
+            GraphicPoint gpZ2 = new GraphicPoint(1, 1);
+            gpZ2.point = new PointF(x, y);
+            gpZ2.z = z - 100000;
+            gpZ2 = ApplyMatrix(gpZ2, matrix);
+
+            /*GraphicPoint gpX1 = ApplyMatrix(AxisLines[0].A, matrix);
+            GraphicPoint gpX2 = ApplyMatrix(AxisLines[0].B, matrix);
+            GraphicPoint gpY1 = ApplyMatrix(AxisLines[1].A, matrix);
+            GraphicPoint gpY2 = ApplyMatrix(AxisLines[1].B, matrix);
+            GraphicPoint gpZ1 = ApplyMatrix(AxisLines[2].A, matrix);
+            GraphicPoint gpZ2 = ApplyMatrix(AxisLines[2].B, matrix);*/
+
+            AxisLines[0] = new Line(gpX1, gpX2);
+            AxisLines[1] = new Line(gpY1, gpY2);
+            AxisLines[2] = new Line(gpZ1, gpZ2);
+
+            //TODO: перевычислить X и Y относительно матрицы изменений
+            //for (int i = 0; i < 3; i++)
+            //{
+            //lines[i].A = ApplyMatrix(lines[i].A,);
+            //lines[i].B = ApplyMatrix(lines[i].A,);
+            //}
+
+            return AxisLines;
+            //throw new NotImplementedException();
+        }
+        private Line[] SetAxes(float x, float y, float z)
+        {
+
+
+            GraphicPoint gpX1 = new GraphicPoint(1, 1);
+            gpX1.point = new PointF(x + 100000, y);
+            gpX1.z = z;
+
+            GraphicPoint gpX2 = new GraphicPoint(1, 1);
+            gpX2.point = new PointF(x - 100000, y);
+            gpX2.z = z;
+
+            GraphicPoint gpY1 = new GraphicPoint(1, 1);
+            gpY1.point = new PointF(x, y + 100000);
+            gpY1.z = z;
+
+            GraphicPoint gpY2 = new GraphicPoint(1, 1);
+            gpY2.point = new PointF(x, y - 100000);
+            gpY2.z = z;
+
+            GraphicPoint gpZ1 = new GraphicPoint(1, 1);
+            gpZ1.point = new PointF(x, y);
+            gpZ1.z = z - 100000;
+
+            GraphicPoint gpZ2 = new GraphicPoint(1, 1);
+            gpZ2.point = new PointF(x, y);
+            gpZ2.z = z + 100000;
+
+
+            PointF nullPointZ1 = new PointF(x, y);
+            PointF nullPointZ2 = new PointF(x, y);
+
+            AxisLines[0] = new Line(gpX1, gpX2);
+            AxisLines[1] = new Line(gpY1, gpY2);
+            AxisLines[2] = new Line(gpZ1, gpZ2);
+
+            //TODO: перевычислить X и Y относительно матрицы изменений
+            //for (int i = 0; i < 3; i++)
+            //{
+            //lines[i].A = ApplyMatrix(lines[i].A,);
+            //lines[i].B = ApplyMatrix(lines[i].A,);
+            //}
+
+            return AxisLines;
+            //throw new NotImplementedException();
+        }
+        private GraphicPoint ApplyMatrix(GraphicPoint point, float[][] matrix)
+        {
+            GraphicPoint changedPoint = new GraphicPoint(1, 1);
+            float[] pointData = new float[] { point.point.X, point.point.Y, point.z, 1 };//{ point.X, point.Y, point.Z, 1 };//
+            float pqrs = 0;
+            float tempX = 0, tempY = 0;
+
+            for (int i = 0; i < 4; i++)
+                switch (i)
+                {
+                    case 0: { tempX = ApplyRow(pointData, GetColumn(matrix, i)); break; }
+                    case 1: { tempY = ApplyRow(pointData, GetColumn(matrix, i)); break; }
+                    case 2: { changedPoint.z = ApplyRow(pointData, GetColumn(matrix, i)); break; }
+                    case 3: { pqrs = ApplyRow(pointData, GetColumn(matrix, i)); break; }
+                }
+            changedPoint.point = new PointF(tempX, tempY);
+            //changedPoint.X = tempX;
+            //changedPoint.Y = tempY;
+            for (int i = 0; i < 3; i++)
+                switch (i)
+                {
+                    case 0: { tempX = changedPoint.point.X / pqrs; break; }
+                    case 1: { tempY = changedPoint.point.Y / pqrs; break; }
+                    case 2: { changedPoint.z = changedPoint.z / pqrs; break; }
+                }
+            changedPoint.point = new PointF(tempX, tempY);
+            //changedPoint.X = tempX;
+            //changedPoint.Y = tempY;
+            return changedPoint;
+        }
+
+        private void UpdateMatrix(float[][] matrix)
+        {
+            float[][] oldRxyz = new float[][]
+            {
+                new float[] {1, 0, 0, 0 },
+                new float[] {0, 1, 0, 0 },
+                new float[] {0, 0, 1, 0 },
+                new float[] {0, 0, 0, 1 },
+            };
+            for (int i = 0; i < 4; i++)
+                for (int j = 0; j < 4; j++)
+                    oldRxyz[i][j] = Rxyz[i][j];
+
+            for (int i = 0; i < 4; i++)
+                for (int j = 0; j < 4; j++)
+                    Rxyz[i][j] = ApplyRow(oldRxyz[i], GetColumn(matrix, j));
+        }
+        private float ApplyRow(float[] pointData, float[] column)
+        {
+            float res = 0;
+
+            for (int i = 0; i < 4; i++)
+                res += pointData[i] * column[i];
+
+            return res;
+        }
+        private float[] GetColumn(float[][] matrix, int column)
+        {
+            int N = matrix.Length;
+            float[] resCol = new float[N];
+
+            for (int i = 0; i < N; i++)
+                resCol[i] = matrix[i][column];
+
+            return resCol;
+        }
+
+        private void vScrollBar1_ValueChanged(object sender, EventArgs e)
+        {
+            float sinA = (float)Math.Sin(2 * Math.PI * ((float)vScrollBar1.Value - prevVScrollBar) / 3600);
+            float cosA = (float)Math.Cos(2 * Math.PI * ((float)vScrollBar1.Value - prevVScrollBar) / 3600);
+
+            prevVScrollBar = vScrollBar1.Value;
+
+            float[][] matrix = new float[][]
+            {
+                new float[]{1, 0, 0, 0 },
+                new float[]{0, cosA, sinA, 0 },
+                new float[]{0, -sinA, cosA, 0 },
+                new float[]{0, 0, 0, 1 },
+            };
+            UpdateMatrix(matrix);
+            GraphicPoint newNullPoint = new GraphicPoint(1, 1);
+            /**/
+            float X = GraphicObject.NullPoint.X;
+            float Y = GraphicObject.NullPoint.Y;
+            newNullPoint.point = new PointF(X, Y);
+            newNullPoint.z = GraphicObject.NullZ;
+            
+
+            
+            newNullPoint = ApplyMatrix(newNullPoint, matrix);
+
+           
+            GraphicObject.NullPoint.X = newNullPoint.point.X;
+            GraphicObject.NullPoint.Y = newNullPoint.point.Y;
+            GraphicObject.NullZ = newNullPoint.z;
+
+
+            matrix[3][0] = GraphicObject.NullPoint.X;
+            matrix[3][1] = GraphicObject.NullPoint.Y;
+            matrix[3][2] = GraphicObject.NullZ;
+            matrix[3][3] = 1;
+
+            SetAxes(GraphicObject.NullPoint.X, GraphicObject.NullPoint.Y, GraphicObject.NullZ, Rxyz);
+            pictureBox1.Refresh();
+        }
+        private void hScrollBar1_ValueChanged(object sender, EventArgs e)
+        {
+
+
+            float sinA = (float)Math.Sin(2 * Math.PI * ((float)hScrollBar1.Value - prevHScrollBar) / 3600);
+            float cosA = (float)Math.Cos(2 * Math.PI * ((float)hScrollBar1.Value - prevHScrollBar) / 3600);
+
+            prevHScrollBar = hScrollBar1.Value;
+
+            float[][] matrix = new float[][]
+            {
+                new float[]{cosA, 0, -sinA,  0 },
+                new float[]{0,    1,  0,     0 },
+                new float[]{sinA, 0,  cosA,  0 },
+                new float[]{0,    0,  0,     1 },
+            };
+            UpdateMatrix(matrix);
+            GraphicPoint newNullPoint = new GraphicPoint(1, 1);
+            /**/
+            float X = GraphicObject.NullPoint.X;
+            float Y = GraphicObject.NullPoint.Y;
+            newNullPoint.point = new PointF(X, Y);
+            newNullPoint.z = GraphicObject.NullZ;
+
+
+
+            newNullPoint = ApplyMatrix(newNullPoint, matrix);
+
+            
+
+            GraphicObject.NullPoint.X = newNullPoint.point.X;
+            GraphicObject.NullPoint.Y = newNullPoint.point.Y;
+            GraphicObject.NullZ = newNullPoint.z;
+
+            matrix[3][0] = GraphicObject.NullPoint.X;
+            matrix[3][1] = GraphicObject.NullPoint.Y;
+            matrix[3][2] = GraphicObject.NullZ;
+            matrix[3][3] = 1;
+
+            SetAxes(GraphicObject.NullPoint.X, GraphicObject.NullPoint.Y, GraphicObject.NullZ, Rxyz);
+
             pictureBox1.Refresh();
         }
     }

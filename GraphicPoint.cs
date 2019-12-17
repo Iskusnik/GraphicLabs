@@ -11,6 +11,7 @@ namespace _2pointsNET4_8
     class GraphicPoint : GraphicObject
     {
         public static int pointR = 5;
+
         public PointF point { get; set; }
         public float X 
         { 
@@ -23,21 +24,21 @@ namespace _2pointsNET4_8
         }
         public float Y 
         { 
-            get { return -point.Y + GraphicObject.NullPoint.Y; }
+            get { return point.Y - GraphicObject.NullPoint.Y; }//{ return -point.Y + GraphicObject.NullPoint.Y; }
             set
             {
-                float temp = -value + GraphicObject.NullPoint.Y;
+                float temp = value + GraphicObject.NullPoint.Y;//float temp = -value + GraphicObject.NullPoint.Y;
                 point = new PointF(point.X, temp);
             }
         }
 
-        private float z;
+        public float z;
         public float Z { get { return z - GraphicObject.NullZ; } set { z = value; } }
 
         public GraphicPoint (float x, float y)
         {
             point = new PointF(x, y);
-            Z = 1;
+            Z = 0;
         }
 
         public static implicit operator PointF(GraphicPoint p)
@@ -94,7 +95,7 @@ namespace _2pointsNET4_8
         public override void MoveObject(float X, float Y)
         {
             this.X += X;
-            this.Y -= Y;
+            this.Y += Y;
         }
     }
 }
