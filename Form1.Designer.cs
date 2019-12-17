@@ -31,18 +31,31 @@
             this.splitContainerMain = new System.Windows.Forms.SplitContainer();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.panelButtons = new System.Windows.Forms.Panel();
+            this.numericUpDownThick = new System.Windows.Forms.NumericUpDown();
+            this.pictureBoxColorPicker = new System.Windows.Forms.PictureBox();
+            this.label1 = new System.Windows.Forms.Label();
+            this.numericUpDownZ = new System.Windows.Forms.NumericUpDown();
+            this.numericUpDownY = new System.Windows.Forms.NumericUpDown();
+            this.numericUpDownX = new System.Windows.Forms.NumericUpDown();
+            this.checkBoxAxes = new System.Windows.Forms.CheckBox();
             this.buttonDeleteGrouping = new System.Windows.Forms.Button();
             this.richTextBox1 = new System.Windows.Forms.RichTextBox();
             this.textBox1 = new System.Windows.Forms.RichTextBox();
             this.buttonDel = new System.Windows.Forms.Button();
             this.button2PointsLine = new System.Windows.Forms.Button();
-            this.checkBoxAxes = new System.Windows.Forms.CheckBox();
+            this.colorDialog1 = new System.Windows.Forms.ColorDialog();
+            this.buttonClear = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainerMain)).BeginInit();
             this.splitContainerMain.Panel1.SuspendLayout();
             this.splitContainerMain.Panel2.SuspendLayout();
             this.splitContainerMain.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.panelButtons.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownThick)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBoxColorPicker)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownZ)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownY)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownX)).BeginInit();
             this.SuspendLayout();
             // 
             // splitContainerMain
@@ -78,6 +91,13 @@
             // 
             // panelButtons
             // 
+            this.panelButtons.Controls.Add(this.buttonClear);
+            this.panelButtons.Controls.Add(this.numericUpDownThick);
+            this.panelButtons.Controls.Add(this.pictureBoxColorPicker);
+            this.panelButtons.Controls.Add(this.label1);
+            this.panelButtons.Controls.Add(this.numericUpDownZ);
+            this.panelButtons.Controls.Add(this.numericUpDownY);
+            this.panelButtons.Controls.Add(this.numericUpDownX);
             this.panelButtons.Controls.Add(this.checkBoxAxes);
             this.panelButtons.Controls.Add(this.buttonDeleteGrouping);
             this.panelButtons.Controls.Add(this.richTextBox1);
@@ -89,6 +109,104 @@
             this.panelButtons.Name = "panelButtons";
             this.panelButtons.Size = new System.Drawing.Size(246, 450);
             this.panelButtons.TabIndex = 0;
+            // 
+            // numericUpDownThick
+            // 
+            this.numericUpDownThick.Location = new System.Drawing.Point(180, 92);
+            this.numericUpDownThick.Name = "numericUpDownThick";
+            this.numericUpDownThick.Size = new System.Drawing.Size(44, 20);
+            this.numericUpDownThick.TabIndex = 11;
+            this.numericUpDownThick.Value = new decimal(new int[] {
+            3,
+            0,
+            0,
+            0});
+            this.numericUpDownThick.ValueChanged += new System.EventHandler(this.numericUpDownThick_ValueChanged);
+            // 
+            // pictureBoxColorPicker
+            // 
+            this.pictureBoxColorPicker.BackColor = System.Drawing.Color.Black;
+            this.pictureBoxColorPicker.Location = new System.Drawing.Point(145, 89);
+            this.pictureBoxColorPicker.Name = "pictureBoxColorPicker";
+            this.pictureBoxColorPicker.Size = new System.Drawing.Size(29, 23);
+            this.pictureBoxColorPicker.TabIndex = 10;
+            this.pictureBoxColorPicker.TabStop = false;
+            this.pictureBoxColorPicker.BackColorChanged += new System.EventHandler(this.pictureBoxColorPicker_BackColorChanged);
+            this.pictureBoxColorPicker.Click += new System.EventHandler(this.pictureBoxColorPicker_Click);
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(3, 342);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(131, 13);
+            this.label1.TabIndex = 9;
+            this.label1.Text = "Точка начала координат";
+            // 
+            // numericUpDownZ
+            // 
+            this.numericUpDownZ.Location = new System.Drawing.Point(122, 358);
+            this.numericUpDownZ.Maximum = new decimal(new int[] {
+            100000,
+            0,
+            0,
+            0});
+            this.numericUpDownZ.Minimum = new decimal(new int[] {
+            100000,
+            0,
+            0,
+            -2147483648});
+            this.numericUpDownZ.Name = "numericUpDownZ";
+            this.numericUpDownZ.Size = new System.Drawing.Size(52, 20);
+            this.numericUpDownZ.TabIndex = 8;
+            this.numericUpDownZ.ValueChanged += new System.EventHandler(this.numericUpDown_ValueChanged);
+            // 
+            // numericUpDownY
+            // 
+            this.numericUpDownY.Location = new System.Drawing.Point(64, 358);
+            this.numericUpDownY.Maximum = new decimal(new int[] {
+            100000,
+            0,
+            0,
+            0});
+            this.numericUpDownY.Minimum = new decimal(new int[] {
+            100000,
+            0,
+            0,
+            -2147483648});
+            this.numericUpDownY.Name = "numericUpDownY";
+            this.numericUpDownY.Size = new System.Drawing.Size(52, 20);
+            this.numericUpDownY.TabIndex = 7;
+            this.numericUpDownY.ValueChanged += new System.EventHandler(this.numericUpDown_ValueChanged);
+            // 
+            // numericUpDownX
+            // 
+            this.numericUpDownX.Location = new System.Drawing.Point(6, 358);
+            this.numericUpDownX.Maximum = new decimal(new int[] {
+            100000,
+            0,
+            0,
+            0});
+            this.numericUpDownX.Minimum = new decimal(new int[] {
+            100000,
+            0,
+            0,
+            -2147483648});
+            this.numericUpDownX.Name = "numericUpDownX";
+            this.numericUpDownX.Size = new System.Drawing.Size(52, 20);
+            this.numericUpDownX.TabIndex = 6;
+            this.numericUpDownX.ValueChanged += new System.EventHandler(this.numericUpDown_ValueChanged);
+            // 
+            // checkBoxAxes
+            // 
+            this.checkBoxAxes.AutoSize = true;
+            this.checkBoxAxes.Location = new System.Drawing.Point(188, 361);
+            this.checkBoxAxes.Name = "checkBoxAxes";
+            this.checkBoxAxes.Size = new System.Drawing.Size(46, 17);
+            this.checkBoxAxes.TabIndex = 5;
+            this.checkBoxAxes.Text = "Оси";
+            this.checkBoxAxes.UseVisualStyleBackColor = true;
+            this.checkBoxAxes.CheckedChanged += new System.EventHandler(this.checkBoxAxes_CheckedChanged);
             // 
             // buttonDeleteGrouping
             // 
@@ -112,10 +230,11 @@
             // 
             // textBox1
             // 
-            this.textBox1.Location = new System.Drawing.Point(29, 27);
+            this.textBox1.Dock = System.Windows.Forms.DockStyle.Top;
+            this.textBox1.Location = new System.Drawing.Point(0, 0);
             this.textBox1.Name = "textBox1";
             this.textBox1.ReadOnly = true;
-            this.textBox1.Size = new System.Drawing.Size(195, 56);
+            this.textBox1.Size = new System.Drawing.Size(246, 83);
             this.textBox1.TabIndex = 2;
             this.textBox1.Text = "";
             // 
@@ -133,22 +252,21 @@
             // 
             this.button2PointsLine.Location = new System.Drawing.Point(29, 89);
             this.button2PointsLine.Name = "button2PointsLine";
-            this.button2PointsLine.Size = new System.Drawing.Size(195, 23);
+            this.button2PointsLine.Size = new System.Drawing.Size(105, 23);
             this.button2PointsLine.TabIndex = 0;
             this.button2PointsLine.Text = "Линия";
             this.button2PointsLine.UseVisualStyleBackColor = true;
             this.button2PointsLine.Click += new System.EventHandler(this.button2PointsLine_Click);
             // 
-            // checkBoxAxes
+            // buttonClear
             // 
-            this.checkBoxAxes.AutoSize = true;
-            this.checkBoxAxes.Location = new System.Drawing.Point(4, 361);
-            this.checkBoxAxes.Name = "checkBoxAxes";
-            this.checkBoxAxes.Size = new System.Drawing.Size(46, 17);
-            this.checkBoxAxes.TabIndex = 5;
-            this.checkBoxAxes.Text = "Оси";
-            this.checkBoxAxes.UseVisualStyleBackColor = true;
-            this.checkBoxAxes.CheckedChanged += new System.EventHandler(this.checkBoxAxes_CheckedChanged);
+            this.buttonClear.Location = new System.Drawing.Point(29, 176);
+            this.buttonClear.Name = "buttonClear";
+            this.buttonClear.Size = new System.Drawing.Size(195, 23);
+            this.buttonClear.TabIndex = 12;
+            this.buttonClear.Text = "Очистить";
+            this.buttonClear.UseVisualStyleBackColor = true;
+            this.buttonClear.Click += new System.EventHandler(this.buttonClear_Click);
             // 
             // FormMain
             // 
@@ -169,6 +287,11 @@
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.panelButtons.ResumeLayout(false);
             this.panelButtons.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownThick)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBoxColorPicker)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownZ)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownY)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownX)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -184,6 +307,14 @@
         private System.Windows.Forms.RichTextBox richTextBox1;
         private System.Windows.Forms.Button buttonDeleteGrouping;
         private System.Windows.Forms.CheckBox checkBoxAxes;
+        private System.Windows.Forms.NumericUpDown numericUpDownZ;
+        private System.Windows.Forms.NumericUpDown numericUpDownY;
+        private System.Windows.Forms.NumericUpDown numericUpDownX;
+        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.PictureBox pictureBoxColorPicker;
+        private System.Windows.Forms.ColorDialog colorDialog1;
+        private System.Windows.Forms.NumericUpDown numericUpDownThick;
+        private System.Windows.Forms.Button buttonClear;
     }
 }
 

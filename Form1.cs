@@ -24,7 +24,7 @@ namespace _2pointsNET4_8
         //-1 - ничего
         //1 - что-то
         int selectMode = -1;
-
+        Color GlobalColor;
         //Координаты курсора
         //float hoverX, hoverY;
 
@@ -35,7 +35,9 @@ namespace _2pointsNET4_8
 
         private void button2PointsLine_Click(object sender, EventArgs e)
         {
-            selectableGraphicObjects.Add(new Line(pictureBox1.Width, pictureBox1.Height));
+            Line newLine = new Line(pictureBox1.Width, pictureBox1.Height);
+            newLine.LocalPen = new Pen(GlobalColor, (float)numericUpDownThick.Value);
+            selectableGraphicObjects.Add(newLine);
             Refresh();
         }
 
@@ -348,6 +350,11 @@ namespace _2pointsNET4_8
             cm.Opening += new CancelEventHandler(contexMenu_Opening);
 
             GraphicObject.NullPoint = new PointF(pictureBox1.Size.Width/2, pictureBox1.Size.Height/2);
+
+            numericUpDownX.Value = pictureBox1.Size.Width / 2;
+            numericUpDownY.Value = pictureBox1.Size.Height / 2;
+            numericUpDownZ.Value = 1;
+            GlobalColor = pictureBoxColorPicker.BackColor;
             // ...
 
 
@@ -396,6 +403,41 @@ namespace _2pointsNET4_8
 
         private void checkBoxAxes_CheckedChanged(object sender, EventArgs e)
         {
+            pictureBox1.Refresh();
+        }
+
+        
+        private void numericUpDown_ValueChanged(object sender, EventArgs e)
+        {
+            GraphicObject.NullPoint = new PointF((float)numericUpDownX.Value, pictureBox1.Height - (float)numericUpDownY.Value);
+            GraphicObject.NullZ = (float) numericUpDownZ.Value;
+            pictureBox1.Refresh();
+        }
+
+        private void pictureBoxColorPicker_Click(object sender, EventArgs e)
+        {
+            colorDialog1.ShowDialog();
+            pictureBoxColorPicker.BackColor = colorDialog1.Color;
+        }
+
+        private void pictureBoxColorPicker_BackColorChanged(object sender, EventArgs e)
+        {
+            GlobalColor = pictureBoxColorPicker.BackColor;
+
+            if (selectedObj is Line)
+                (selectedObj as Line).LocalPen = new Pen(GlobalColor, (float)numericUpDownThick.Value);
+        }
+
+        private void numericUpDownThick_ValueChanged(object sender, EventArgs e)
+        {
+            if (selectedObj is Line)
+                (selectedObj as Line).LocalPen = new Pen(GlobalColor, (float)numericUpDownThick.Value);
+        }
+
+        private void buttonClear_Click(object sender, EventArgs e)
+        {
+            selectedObj = null;
+            selectableGraphicObjects.Clear();
             pictureBox1.Refresh();
         }
     }

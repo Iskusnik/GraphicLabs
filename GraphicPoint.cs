@@ -93,9 +93,8 @@ namespace _2pointsNET4_8
 
         public override void MoveObject(float X, float Y)
         {
-            float x = this.X + X;
-            float y = this.Y + Y;
-            point = new PointF(x, y);
+            this.X += X;
+            this.Y -= Y;
         }
     }
 }

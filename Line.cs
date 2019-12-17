@@ -14,7 +14,8 @@ namespace _2pointsNET4_8
         public static Random rand = new Random();
         public GraphicPoint A { get; set; }
         public GraphicPoint B { get; set; }
-
+        
+        public Pen LocalPen;
         public Line(PointF A, PointF B)
         {
             this.A = new GraphicPoint(A.X, A.Y);
@@ -63,14 +64,22 @@ namespace _2pointsNET4_8
             if (clckX < Math.Max(line.A.point.X, line.B.point.X) + r && clckX > Math.Min(line.A.point.X, line.B.point.X) - r &&
                 clckY < Math.Max(line.A.point.Y, line.B.point.Y) + r && clckY > Math.Min(line.A.point.Y, line.B.point.Y) - r &&
                 d < r)//clckY - clckX * k - b < r && clckY - clckX * k - b > -r)
+            {
+                isSelected = true;
                 return true;
-
+            }
             //Проверка клика по точке
             if (line.A.CheckSelection(clckX, clckY))
+            {
+                isSelected = true;
                 return true;
+            }
 
             if (line.B.CheckSelection(clckX, clckY))
+            {
+                isSelected = true;
                 return true;
+            }
 
             return false;
         }
@@ -93,7 +102,12 @@ namespace _2pointsNET4_8
         public override void DrawObject(Graphics graphics, Pen pen, Brush brush)
         {
             if (pen == null)
-                pen = new Pen(Color.Black, 3);
+            {
+                if (LocalPen != null)
+                    pen = LocalPen;
+                else
+                    pen = new Pen(Color.Black, 3);
+            }
 
             if (brush == null)
                 brush = new SolidBrush(Color.Green);
@@ -101,9 +115,11 @@ namespace _2pointsNET4_8
             float r = GraphicPoint.pointR;
             graphics.DrawLine(pen, A.point, B.point);
 
-            A.DrawObject(graphics, pen, brush);
-
-            B.DrawObject(graphics, pen, brush);
+            if (this.isSelected)
+            {
+                A.DrawObject(graphics, pen, brush);
+                B.DrawObject(graphics, pen, brush);
+            }
         }
 
         //TODO: понять, как получить реальную высоту объекта graphics
