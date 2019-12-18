@@ -140,6 +140,43 @@ namespace _2pointsNET4_8
             this.point = changedPoint.point;
             this.z = changedPoint.z;
         }
+
+        public override void ApplyMatrixLocal(float[][] matrix)
+        {
+            
+            GraphicPoint changedPoint = new GraphicPoint(1, 1);
+            float[] pointData = new float[] { this.X, this.Y, this.Z, 1 };//{ point.X, point.Y, point.Z, 1 };//
+            float pqrs = 0;
+
+            for (int i = 0; i < 4; i++)
+                switch (i)
+                {
+                    case 0: { changedPoint.X = ApplyRow(pointData, GetColumn(matrix, i)); break; }
+                    case 1: { changedPoint.Y = ApplyRow(pointData, GetColumn(matrix, i)); break; }
+                    case 2: { changedPoint.Z = ApplyRow(pointData, GetColumn(matrix, i)); break; }
+                    case 3: { pqrs = ApplyRow(pointData, GetColumn(matrix, i)); break; }
+                }
+            //changedPoint.X = tempX;
+            //changedPoint.Y = tempY;
+            for (int i = 0; i < 3; i++)
+                switch (i)
+                {
+                    case 0: { changedPoint.X = changedPoint.point.X / pqrs; break; }
+                    case 1: { changedPoint.Y = changedPoint.point.Y / pqrs; break; }
+                    case 2: { changedPoint.Z = changedPoint.Z / pqrs; break; }
+                }
+            //changedPoint.X = tempX;
+            //changedPoint.Y = tempY;
+            changedPoint.point = new PointF(changedPoint.point.X - GraphicObject.NullPoint.X, changedPoint.point.Y - GraphicObject.NullPoint.Y);
+            changedPoint.z -= NullZ;
+            this.point = changedPoint.point;
+            this.z = changedPoint.z;
+            //this.X = changedPoint.X;
+            //this.Y = changedPoint.Y;
+            //this.Z = changedPoint.Z;
+        }
+
+
         private float ApplyRow(float[] pointData, float[] column)
         {
             float res = 0;

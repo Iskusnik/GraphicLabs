@@ -47,6 +47,7 @@
             this.buttonDel = new System.Windows.Forms.Button();
             this.button2PointsLine = new System.Windows.Forms.Button();
             this.colorDialog1 = new System.Windows.Forms.ColorDialog();
+            this.checkBoxOnLocal = new System.Windows.Forms.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainerMain)).BeginInit();
             this.splitContainerMain.Panel1.SuspendLayout();
             this.splitContainerMain.Panel2.SuspendLayout();
@@ -117,6 +118,7 @@
             // 
             // panelButtons
             // 
+            this.panelButtons.Controls.Add(this.checkBoxOnLocal);
             this.panelButtons.Controls.Add(this.buttonClear);
             this.panelButtons.Controls.Add(this.numericUpDownThick);
             this.panelButtons.Controls.Add(this.pictureBoxColorPicker);
@@ -294,6 +296,17 @@
             this.button2PointsLine.UseVisualStyleBackColor = true;
             this.button2PointsLine.Click += new System.EventHandler(this.button2PointsLine_Click);
             // 
+            // checkBoxOnLocal
+            // 
+            this.checkBoxOnLocal.AutoSize = true;
+            this.checkBoxOnLocal.Location = new System.Drawing.Point(6, 313);
+            this.checkBoxOnLocal.Name = "checkBoxOnLocal";
+            this.checkBoxOnLocal.Size = new System.Drawing.Size(242, 17);
+            this.checkBoxOnLocal.TabIndex = 13;
+            this.checkBoxOnLocal.Text = "Преобразования относительно локальной";
+            this.checkBoxOnLocal.UseVisualStyleBackColor = true;
+            this.checkBoxOnLocal.CheckedChanged += new System.EventHandler(this.checkBoxOnLocal_CheckedChanged);
+            // 
             // FormMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -343,6 +356,7 @@
         private System.Windows.Forms.Button buttonClear;
         private System.Windows.Forms.HScrollBar hScrollBar1;
         private System.Windows.Forms.VScrollBar vScrollBar1;
+        private System.Windows.Forms.CheckBox checkBoxOnLocal;
     }
 }
 

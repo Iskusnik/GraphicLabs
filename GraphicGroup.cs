@@ -74,5 +74,11 @@ namespace _2pointsNET4_8
             for (int i = 0; i < objectsGroup.Count; i++)
                 objectsGroup[i].ApplyMatrix(matrix);
         }
+
+        public override void ApplyMatrixLocal(float[][] matrix)
+        {
+            for (int i = 0; i < objectsGroup.Count; i++)
+                objectsGroup[i].ApplyMatrixLocal(matrix);
+        }
     }
 }

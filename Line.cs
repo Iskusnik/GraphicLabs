@@ -155,5 +155,11 @@ namespace _2pointsNET4_8
             this.A.ApplyMatrix(matrix);
             this.B.ApplyMatrix(matrix);
         }
+
+        public override void ApplyMatrixLocal(float[][] matrix)
+        {
+            this.A.ApplyMatrixLocal(matrix);
+            this.B.ApplyMatrixLocal(matrix);
+        }
     }
 }

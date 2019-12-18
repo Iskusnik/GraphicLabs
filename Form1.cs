@@ -29,7 +29,7 @@ namespace _2pointsNET4_8
         //float hoverX, hoverY;
 
         float[][] Rxyz;
-
+        float[][] RxyzLocal;
         public FormMain()
         {
             InitializeComponent();
@@ -177,24 +177,36 @@ namespace _2pointsNET4_8
             float hoverX = e.Location.X;
             float hoverY = e.Location.Y;
             GraphicObject hoveredObj = null;
+
+            
             foreach (var obj in selectableGraphicObjects)
             {
                 if (obj is Line)
                     if ((obj as Line).CheckSelection(hoverX, hoverY))
                     {
                         hoveredObj = obj;
+                        textBox1.Text = "";
                         if ((hoveredObj as Line).A.CheckSelection(hoverX, hoverY))
+                        {
                             hoveredObj = (hoveredObj as Line).A;
+                            textBox1.Text = "A:";
+                        }
                         else
                             if ((hoveredObj as Line).B.CheckSelection(hoverX, hoverY))
+                        {
                             hoveredObj = (hoveredObj as Line).B;
+                            textBox1.Text = "B:";
+                        }
                     }
                 if (obj is GraphicGroup)
                     if ((obj as GraphicGroup).CheckSelection(hoverX, hoverY))
+                    {
                         hoveredObj = obj;
+                        textBox1.Text = "";
+                    }
             }
             if (hoveredObj != null)
-                textBox1.Text = hoveredObj.GetInfo(pictureBox1.Size);
+                textBox1.Text += hoveredObj.GetInfo(pictureBox1.Size);
             else
                 ;//textBox1.Text = "";
 
@@ -250,6 +262,9 @@ namespace _2pointsNET4_8
 
         private void buttonDel_Click(object sender, EventArgs e)
         {
+            //richTextBox1.Text = "";
+            //richTextBox1.Text += "Sin: " + (double)Math.Sin(2 * Math.PI * ((float)vScrollBar1.Value - prevVScrollBar) / 3600) + "\n";
+            //richTextBox1.Text += "Cos: " + (double)Math.Cos(2 * Math.PI * ((float)vScrollBar1.Value - prevVScrollBar) / 3600) + "\n";
             if (selectMode == -1)
             {
                 selectableGraphicObjects.Remove(selectedObj);
@@ -348,7 +363,7 @@ namespace _2pointsNET4_8
             cm.Items.Add("Z");
             cm.ItemClicked += new ToolStripItemClickedEventHandler(contexMenu_ItemClicked);
             cm.Opening += new CancelEventHandler(contexMenu_Opening);
-            
+
             Rxyz = new float[][]
             {
                 new float[] {1, 0, 0, 0 },
@@ -356,15 +371,21 @@ namespace _2pointsNET4_8
                 new float[] {0, 0, 1, 0 },
                 new float[] {0, 0, 0, 1 },
             };
-
-            GraphicObject.NullPoint = new PointF(pictureBox1.Size.Width/2, pictureBox1.Size.Height/2);
+            RxyzLocal = new float[][]
+            {
+                new float[] {1, 0, 0, 0 },
+                new float[] {0, 1, 0, 0 },
+                new float[] {0, 0, 1, 0 },
+                new float[] {0, 0, 0, 1 },
+            };
+            GraphicObject.NullPoint = new PointF(pictureBox1.Size.Width / 2, pictureBox1.Size.Height / 2);
 
             numericUpDownX.Value = pictureBox1.Size.Width / 2;
             numericUpDownY.Value = pictureBox1.Size.Height / 2;
             numericUpDownZ.Value = 0;
             GlobalColor = pictureBoxColorPicker.BackColor;
             // ...
-            
+
 
 
             SetAxes(pictureBox1.Size.Width / 2, pictureBox1.Size.Height / 2, 0);
@@ -372,6 +393,8 @@ namespace _2pointsNET4_8
 
 
             pictureBox1.ContextMenuStrip = cm;
+
+            
         }
 
 
@@ -463,12 +486,21 @@ namespace _2pointsNET4_8
                 new float[] {0, 0, 1, 0 },
                 new float[] {0, 0, 0, 1 },
             };
+            RxyzLocal = new float[][]
+            {
+                new float[] {1, 0, 0, 0 },
+                new float[] {0, 1, 0, 0 },
+                new float[] {0, 0, 1, 0 },
+                new float[] {0, 0, 0, 1 },
+            };
             numericUpDownX.Value = pictureBox1.Size.Width / 2;
             numericUpDownY.Value = pictureBox1.Size.Height / 2;
             numericUpDownZ.Value = 1;
             
             prevHScrollBar = 1800;
             prevVScrollBar = 1800;
+            prevHScrollBarLocal = 1800;
+            prevHScrollBarLocal = 1800;
 
             hScrollBar1.Value = 1800;
             vScrollBar1.Value = 1800;
@@ -482,7 +514,8 @@ namespace _2pointsNET4_8
 
         float prevHScrollBar = 1800;
         float prevVScrollBar = 1800;
-        
+        float prevHScrollBarLocal = 1800;
+        float prevVScrollBarLocal = 1800;
 
         Line[] AxisLines = new Line[3];
         private Line[] SetAxes(float x, float y, float z, float[][] matrix)
@@ -620,6 +653,33 @@ namespace _2pointsNET4_8
             //changedPoint.Y = tempY;
             return changedPoint;
         }
+        private GraphicPoint ApplyMatrixRelatedToLocal(GraphicPoint point, float[][] matrix)
+        {
+            GraphicPoint changedPoint = new GraphicPoint(1, 1);
+            float[] pointData = new float[] { point.X, point.Y, point.Z, 1 };//{ point.X, point.Y, point.Z, 1 };//
+            float pqrs = 0;
+            
+            for (int i = 0; i < 4; i++)
+                switch (i)
+                {
+                    case 0: { changedPoint.X = ApplyRow(pointData, GetColumn(matrix, i)); break; }
+                    case 1: { changedPoint.Y = ApplyRow(pointData, GetColumn(matrix, i)); break; }
+                    case 2: { changedPoint.Z = ApplyRow(pointData, GetColumn(matrix, i)); break; }
+                    case 3: { pqrs = ApplyRow(pointData, GetColumn(matrix, i)); break; }
+                }
+            //changedPoint.X = tempX;
+            //changedPoint.Y = tempY;
+            for (int i = 0; i < 3; i++)
+                switch (i)
+                {
+                    case 0: { changedPoint.X = changedPoint.point.X / pqrs; break; }
+                    case 1: { changedPoint.Y = changedPoint.point.Y / pqrs; break; }
+                    case 2: { changedPoint.Z = changedPoint.Z / pqrs; break; }
+                }
+            //changedPoint.X = tempX;
+            //changedPoint.Y = tempY;
+            return changedPoint;
+        }
 
         private void UpdateMatrix(float[][] matrix)
         {
@@ -637,6 +697,23 @@ namespace _2pointsNET4_8
             for (int i = 0; i < 4; i++)
                 for (int j = 0; j < 4; j++)
                     Rxyz[i][j] = ApplyRow(oldRxyz[i], GetColumn(matrix, j));
+        }
+        private void UpdateMatrixLocal(float[][] matrix)
+        {
+            float[][] oldRxyz = new float[][]
+            {
+                new float[] {1, 0, 0, 0 },
+                new float[] {0, 1, 0, 0 },
+                new float[] {0, 0, 1, 0 },
+                new float[] {0, 0, 0, 1 },
+            };
+            for (int i = 0; i < 4; i++)
+                for (int j = 0; j < 4; j++)
+                    oldRxyz[i][j] = RxyzLocal[i][j];
+
+            for (int i = 0; i < 4; i++)
+                for (int j = 0; j < 4; j++)
+                    RxyzLocal[i][j] = ApplyRow(oldRxyz[i], GetColumn(matrix, j));
         }
         private float ApplyRow(float[] pointData, float[] column)
         {
@@ -660,95 +737,154 @@ namespace _2pointsNET4_8
 
         private void vScrollBar1_ValueChanged(object sender, EventArgs e)
         {
-            float sinA = (float)Math.Sin(2 * Math.PI * ((float)vScrollBar1.Value - prevVScrollBar) / 3600);
-            float cosA = (float)Math.Cos(2 * Math.PI * ((float)vScrollBar1.Value - prevVScrollBar) / 3600);
-
-            prevVScrollBar = vScrollBar1.Value;
-
-            float[][] matrix = new float[][]
+            if (!checkBoxOnLocal.Checked)
             {
+                float sinA = (float)Math.Sin(2 * Math.PI * ((float)vScrollBar1.Value - prevVScrollBar) / 3600);
+                float cosA = (float)Math.Cos(2 * Math.PI * ((float)vScrollBar1.Value - prevVScrollBar) / 3600);
+
+                prevVScrollBar = vScrollBar1.Value;
+
+                float[][] matrix = new float[][]
+                {
                 new float[]{1, 0, 0, 0 },
                 new float[]{0, cosA, sinA, 0 },
                 new float[]{0, -sinA, cosA, 0 },
                 new float[]{0, 0, 0, 1 },
-            };
-            UpdateMatrix(matrix);
-            GraphicPoint newNullPoint = new GraphicPoint(1, 1);
-            /**/
-            float X = GraphicObject.NullPoint.X;
-            float Y = GraphicObject.NullPoint.Y;
-            newNullPoint.point = new PointF(X, Y);
-            newNullPoint.z = GraphicObject.NullZ;
-            
-
-            
-            newNullPoint = ApplyMatrix(newNullPoint, matrix);
-
-           
-            GraphicObject.NullPoint.X = newNullPoint.point.X;
-            GraphicObject.NullPoint.Y = newNullPoint.point.Y;
-            GraphicObject.NullZ = newNullPoint.z;
+                };
+                UpdateMatrix(matrix);
+                /*GraphicPoint newNullPoint = new GraphicPoint(1, 1);
+                
+                float X = GraphicObject.NullPoint.X;
+                float Y = GraphicObject.NullPoint.Y;
+                newNullPoint.point = new PointF(X, Y);
+                newNullPoint.z = GraphicObject.NullZ;
 
 
-            matrix[3][0] = GraphicObject.NullPoint.X;
-            matrix[3][1] = GraphicObject.NullPoint.Y;
-            matrix[3][2] = GraphicObject.NullZ;
-            matrix[3][3] = 1;
 
-            SetAxes(GraphicObject.NullPoint.X, GraphicObject.NullPoint.Y, GraphicObject.NullZ, Rxyz);
-            UpdateAllObjs();
-            pictureBox1.Refresh();
+                newNullPoint = ApplyMatrix(newNullPoint, Rxyz);
+
+
+                GraphicObject.NullPoint.X = newNullPoint.point.X;
+                GraphicObject.NullPoint.Y = newNullPoint.point.Y;
+                GraphicObject.NullZ = newNullPoint.z;
+
+
+                matrix[3][0] = GraphicObject.NullPoint.X;
+                matrix[3][1] = GraphicObject.NullPoint.Y;
+                matrix[3][2] = GraphicObject.NullZ;
+                matrix[3][3] = 1;*/
+
+                SetAxes(GraphicObject.NullPoint.X, GraphicObject.NullPoint.Y, GraphicObject.NullZ, Rxyz);
+                UpdateAllObjs();
+                pictureBox1.Refresh();
+            }
+            else
+            {
+                float sinA = (float)Math.Sin(2 * Math.PI * ((float)vScrollBar1.Value - prevVScrollBarLocal) / 3600);
+                float cosA = (float)Math.Cos(2 * Math.PI * ((float)vScrollBar1.Value - prevVScrollBarLocal) / 3600);
+
+                prevVScrollBarLocal = vScrollBar1.Value;
+
+                float[][] matrix = new float[][]
+                {
+                new float[]{1, 0, 0, 0 },
+                new float[]{0, cosA, sinA, 0 },
+                new float[]{0, -sinA, cosA, 0 },
+                new float[]{0, 0, 0, 1 },
+                };
+                UpdateMatrixLocal(matrix);
+                UpdateAllObjs();
+                pictureBox1.Refresh();
+            }
         }
-
         private void hScrollBar1_ValueChanged(object sender, EventArgs e)
         {
 
-
-            float sinA = (float)Math.Sin(2 * Math.PI * ((float)hScrollBar1.Value - prevHScrollBar) / 3600);
-            float cosA = (float)Math.Cos(2 * Math.PI * ((float)hScrollBar1.Value - prevHScrollBar) / 3600);
-
-            prevHScrollBar = hScrollBar1.Value;
-
-            float[][] matrix = new float[][]
+            if (!checkBoxOnLocal.Checked)
             {
+                float sinA = (float)Math.Sin(2 * Math.PI * ((float)hScrollBar1.Value - prevHScrollBar) / 3600);
+                float cosA = (float)Math.Cos(2 * Math.PI * ((float)hScrollBar1.Value - prevHScrollBar) / 3600);
+
+                prevHScrollBar = hScrollBar1.Value;
+
+                float[][] matrix = new float[][]
+                {
                 new float[]{cosA, 0, -sinA,  0 },
                 new float[]{0,    1,  0,     0 },
                 new float[]{sinA, 0,  cosA,  0 },
                 new float[]{0,    0,  0,     1 },
-            };
-            UpdateMatrix(matrix);
-            GraphicPoint newNullPoint = new GraphicPoint(1, 1);
-            /**/
-            float X = GraphicObject.NullPoint.X;
-            float Y = GraphicObject.NullPoint.Y;
-            newNullPoint.point = new PointF(X, Y);
-            newNullPoint.z = GraphicObject.NullZ;
+                };
+                UpdateMatrix(matrix);
+                /*GraphicPoint newNullPoint = new GraphicPoint(1, 1);
+                
+                float X = GraphicObject.NullPoint.X;
+                float Y = GraphicObject.NullPoint.Y;
+                newNullPoint.point = new PointF(X, Y);
+                newNullPoint.z = GraphicObject.NullZ;
 
 
 
-            newNullPoint = ApplyMatrix(newNullPoint, matrix);
+                newNullPoint = ApplyMatrix(newNullPoint, Rxyz);
 
-            
 
-            GraphicObject.NullPoint.X = newNullPoint.point.X;
-            GraphicObject.NullPoint.Y = newNullPoint.point.Y;
-            GraphicObject.NullZ = newNullPoint.z;
 
-            matrix[3][0] = GraphicObject.NullPoint.X;
-            matrix[3][1] = GraphicObject.NullPoint.Y;
-            matrix[3][2] = GraphicObject.NullZ;
-            matrix[3][3] = 1;
+                GraphicObject.NullPoint.X = newNullPoint.point.X;
+                GraphicObject.NullPoint.Y = newNullPoint.point.Y;
+                GraphicObject.NullZ = newNullPoint.z;
 
-            SetAxes(GraphicObject.NullPoint.X, GraphicObject.NullPoint.Y, GraphicObject.NullZ, Rxyz);
-            UpdateAllObjs();
-            pictureBox1.Refresh();
+                matrix[3][0] = GraphicObject.NullPoint.X;
+                matrix[3][1] = GraphicObject.NullPoint.Y;
+                matrix[3][2] = GraphicObject.NullZ;
+                matrix[3][3] = 1;*/
+
+                SetAxes(GraphicObject.NullPoint.X, GraphicObject.NullPoint.Y, GraphicObject.NullZ, Rxyz);
+                UpdateAllObjs();
+                pictureBox1.Refresh();
+            }
+            else
+            {
+                float sinA = (float)Math.Sin(2 * Math.PI * ((float)hScrollBar1.Value - prevHScrollBarLocal) / 3600);
+                float cosA = (float)Math.Cos(2 * Math.PI * ((float)hScrollBar1.Value - prevHScrollBarLocal) / 3600);
+
+                prevHScrollBarLocal = hScrollBar1.Value;
+
+                float[][] matrix = new float[][]
+                {
+                new float[]{cosA, 0, -sinA,  0 },
+                new float[]{0,    1,  0,     0 },
+                new float[]{sinA, 0,  cosA,  0 },
+                new float[]{0,    0,  0,     1 },
+                };
+                UpdateMatrixLocal(matrix);
+                UpdateAllObjs();
+                pictureBox1.Refresh();
+            }
         }
 
         private void UpdateAllObjs()
         {
             foreach (GraphicObject obj in selectableGraphicObjects)
+            {
                 obj.ApplyMatrix(Rxyz);
-                
+                obj.ApplyMatrixLocal(RxyzLocal);
+            }   
+        }
+
+        private void checkBoxOnLocal_CheckedChanged(object sender, EventArgs e)
+        {
+            if (checkBoxOnLocal.Checked)
+            {
+                hScrollBar1.Value = (int)Math.Round(prevHScrollBarLocal);
+
+                vScrollBar1.Value = (int)Math.Round(prevVScrollBarLocal);
+            }
+            else
+            {
+                hScrollBar1.Value = (int)Math.Round(prevHScrollBar);
+
+                vScrollBar1.Value = (int)Math.Round(prevVScrollBar);
+            }
+
         }
     }
 }
