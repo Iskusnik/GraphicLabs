@@ -68,5 +68,11 @@ namespace _2pointsNET4_8
             for (int i = 0; i < objectsGroup.Count; i++)
                 objectsGroup[i].MoveObject(X, Y);
         }
+
+        public override void ApplyMatrix(float[][] matrix)
+        {
+            for (int i = 0; i < objectsGroup.Count; i++)
+                objectsGroup[i].ApplyMatrix(matrix);
+        }
     }
 }

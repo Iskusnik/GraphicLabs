@@ -149,5 +149,11 @@ namespace _2pointsNET4_8
             A.MoveObject(X, Y);
             B.MoveObject(X, Y);
         }
+
+        public override void ApplyMatrix(float[][] matrix)
+        {
+            this.A.ApplyMatrix(matrix);
+            this.B.ApplyMatrix(matrix);
+        }
     }
 }

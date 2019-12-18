@@ -199,6 +199,8 @@ namespace _2pointsNET4_8
                 ;//textBox1.Text = "";
 
 
+            float dx = e.Location.X - selectedPoint.X;
+            float dy = e.Location.Y - selectedPoint.Y;
 
             if (isMouseDown == true && selectMode == -1)
             {
@@ -207,29 +209,31 @@ namespace _2pointsNET4_8
                     if ((selectedObj as Line).A.isSelected)
                     {
                         selectedPoint = new PointF(e.Location.X, e.Location.Y);
-                        (selectedObj as Line).A.point = selectedPoint;
+                        //(selectedObj as Line).A.point = selectedPoint;
+
+                        (selectedObj as Line).A.MoveObject(dx, dy);
                     }
                     else
                     if ((selectedObj as Line).B.isSelected)
                     {
                         selectedPoint = new PointF(e.Location.X, e.Location.Y);
-                        (selectedObj as Line).B.point = selectedPoint;
+                        //(selectedObj as Line).B.point = selectedPoint;
+
+                        (selectedObj as Line).B.MoveObject(dx, dy);
                     }
                     else
                     {
-                        float dx = e.Location.X - selectedPoint.X;
-                        float dy = e.Location.Y - selectedPoint.Y;
+                        
 
-                        (selectedObj as Line).A.point = new PointF((selectedObj as Line).A.point.X + dx, (selectedObj as Line).A.point.Y + dy);
-                        (selectedObj as Line).B.point = new PointF((selectedObj as Line).B.point.X + dx, (selectedObj as Line).B.point.Y + dy);
-
+                        //(selectedObj as Line).A.point = new PointF((selectedObj as Line).A.point.X + dx, (selectedObj as Line).A.point.Y + dy);
+                        //(selectedObj as Line).B.point = new PointF((selectedObj as Line).B.point.X + dx, (selectedObj as Line).B.point.Y + dy);
+                        (selectedObj as Line).MoveObject(dx, dy);
                         selectedPoint = new PointF(e.Location.X, e.Location.Y);
                     }
                 }
                 if (selectedObj is GraphicGroup)
                 {
-                    float dx = e.Location.X - selectedPoint.X;
-                    float dy = e.Location.Y - selectedPoint.Y;
+                    
                     selectedObj.MoveObject(dx, dy);
                     selectedPoint = new PointF(e.Location.X, e.Location.Y);
                 }
@@ -692,8 +696,10 @@ namespace _2pointsNET4_8
             matrix[3][3] = 1;
 
             SetAxes(GraphicObject.NullPoint.X, GraphicObject.NullPoint.Y, GraphicObject.NullZ, Rxyz);
+            UpdateAllObjs();
             pictureBox1.Refresh();
         }
+
         private void hScrollBar1_ValueChanged(object sender, EventArgs e)
         {
 
@@ -734,8 +740,15 @@ namespace _2pointsNET4_8
             matrix[3][3] = 1;
 
             SetAxes(GraphicObject.NullPoint.X, GraphicObject.NullPoint.Y, GraphicObject.NullZ, Rxyz);
-
+            UpdateAllObjs();
             pictureBox1.Refresh();
+        }
+
+        private void UpdateAllObjs()
+        {
+            foreach (GraphicObject obj in selectableGraphicObjects)
+                obj.ApplyMatrix(Rxyz);
+                
         }
     }
 }

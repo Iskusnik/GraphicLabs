@@ -18,7 +18,7 @@ namespace _2pointsNET4_8
             prompt.Text = text;
             Label textLabel = new Label() { Left = 12, Top = 12, Text = text, Width = 20 };
             NumericUpDown inputBox = new NumericUpDown() { Left = 96, Top = 12, Width = 100, Height = 20, Minimum = -100000, Maximum = 10000};
-            inputBox.Value = int.Parse(value);
+            inputBox.Value = (int)Math.Floor(float.Parse(value));
 
             Button confirmation = new Button() { Text = "Ok", Left = 12, Top = 39, Width = 184, Height = 23 };
             confirmation.Click += (sender, e) => { prompt.Close(); };

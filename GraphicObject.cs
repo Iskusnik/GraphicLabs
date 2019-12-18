@@ -19,7 +19,7 @@ namespace _2pointsNET4_8
         abstract public bool ChangeSelection(float x, float y);
         abstract public void DrawObject(Graphics graphics, Pen pen, Brush brush);
         abstract public string GetInfo(Size size);
-
         abstract public void MoveObject(float X, float Y);
+        abstract public void ApplyMatrix(float[][] matrix);
     }
 }

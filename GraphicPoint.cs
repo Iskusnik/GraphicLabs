@@ -12,6 +12,9 @@ namespace _2pointsNET4_8
     {
         public static int pointR = 5;
 
+        private PointF pointBeforeChanges;
+        private float zBeforeChanges;
+
         public PointF point { get; set; }
         public float X 
         { 
@@ -20,6 +23,7 @@ namespace _2pointsNET4_8
             {
                 float temp = value + GraphicObject.NullPoint.X;
                 point = new PointF(temp, point.Y);
+                pointBeforeChanges = point;
             }
         }
         public float Y 
@@ -29,16 +33,20 @@ namespace _2pointsNET4_8
             {
                 float temp = value + GraphicObject.NullPoint.Y;//float temp = -value + GraphicObject.NullPoint.Y;
                 point = new PointF(point.X, temp);
+                pointBeforeChanges = point;
             }
         }
 
         public float z;
-        public float Z { get { return z - GraphicObject.NullZ; } set { z = value; } }
+        public float Z { get { return z - GraphicObject.NullZ; } set { z = value; zBeforeChanges = value; } }
 
         public GraphicPoint (float x, float y)
         {
             point = new PointF(x, y);
             Z = 0;
+
+            zBeforeChanges = 0;
+            pointBeforeChanges = point;
         }
 
         public static implicit operator PointF(GraphicPoint p)
@@ -94,8 +102,62 @@ namespace _2pointsNET4_8
 
         public override void MoveObject(float X, float Y)
         {
-            this.X += X;
-            this.Y += Y;
+            this.X = this.X + X;
+            this.Y = this.Y + Y;
+        }
+
+
+        public override void ApplyMatrix(float[][] matrix)
+        {
+            GraphicPoint point = this;
+            GraphicPoint changedPoint = new GraphicPoint(1, 1);
+            float[] pointData = new float[] { point.pointBeforeChanges.X, point.pointBeforeChanges.Y, point.zBeforeChanges, 1 };//{ point.X, point.Y, point.Z, 1 };//
+            float pqrs = 0;
+            float tempX = 0, tempY = 0;
+
+            for (int i = 0; i < 4; i++)
+                switch (i)
+                {
+                    case 0: { tempX = ApplyRow(pointData, GetColumn(matrix, i)); break; }
+                    case 1: { tempY = ApplyRow(pointData, GetColumn(matrix, i)); break; }
+                    case 2: { changedPoint.z = ApplyRow(pointData, GetColumn(matrix, i)); break; }
+                    case 3: { pqrs = ApplyRow(pointData, GetColumn(matrix, i)); break; }
+                }
+            changedPoint.point = new PointF(tempX, tempY);
+            //changedPoint.X = tempX;
+            //changedPoint.Y = tempY;
+            for (int i = 0; i < 3; i++)
+                switch (i)
+                {
+                    case 0: { tempX = changedPoint.point.X / pqrs; break; }
+                    case 1: { tempY = changedPoint.point.Y / pqrs; break; }
+                    case 2: { changedPoint.z = changedPoint.z / pqrs; break; }
+                }
+            changedPoint.point = new PointF(tempX, tempY);
+            //changedPoint.X = tempX;
+            //changedPoint.Y = tempY;
+            
+            this.point = changedPoint.point;
+            this.z = changedPoint.z;
+        }
+        private float ApplyRow(float[] pointData, float[] column)
+        {
+            float res = 0;
+
+            for (int i = 0; i < 4; i++)
+                res += pointData[i] * column[i];
+
+            return res;
+        }
+        private float[] GetColumn(float[][] matrix, int column)
+        {
+            int N = matrix.Length;
+            float[] resCol = new float[N];
+
+            for (int i = 0; i < N; i++)
+                resCol[i] = matrix[i][column];
+
+            return resCol;
         }
     }
 }
