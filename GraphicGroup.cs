@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 
 namespace _2pointsNET4_8
 {
+    [Serializable]
     class GraphicGroup : GraphicObject
     {
         public List<GraphicObject> objectsGroup { get; set; }

@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 
 namespace _2pointsNET4_8
 {
+    [Serializable]
     abstract class GraphicObject
     {
         public static PointF NullPoint = new PointF(0, 0);

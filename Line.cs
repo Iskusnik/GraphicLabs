@@ -7,6 +7,7 @@ using System.Drawing;
 
 namespace _2pointsNET4_8
 {
+    [Serializable]
     class Line: GraphicObject
     {
        
@@ -14,7 +15,7 @@ namespace _2pointsNET4_8
         public static Random rand = new Random();
         public GraphicPoint A { get; set; }
         public GraphicPoint B { get; set; }
-        
+        [NonSerialized]
         public Pen LocalPen;
         public Line(PointF A, PointF B)
         {

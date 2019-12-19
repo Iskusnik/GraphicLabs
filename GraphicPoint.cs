@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 
 namespace _2pointsNET4_8
 {
+    [Serializable]
     class GraphicPoint : GraphicObject
     {
         public static int pointR = 5;

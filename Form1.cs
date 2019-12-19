@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.IO;
 using System.Linq;
+using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -885,6 +887,78 @@ namespace _2pointsNET4_8
                 vScrollBar1.Value = (int)Math.Round(prevVScrollBar);
             }
 
+        }
+
+        private void buttonApplyMatrix_Click(object sender, EventArgs e)
+        {
+            float[][] matrix = new float[][]
+                {
+                new float[]{(float)numericUpDown01.Value, (float)numericUpDown02.Value, (float)numericUpDown03.Value,  (float)numericUpDown04.Value },
+                new float[]{(float)numericUpDown11.Value, (float)numericUpDown12.Value, (float)numericUpDown13.Value,  (float)numericUpDown14.Value },
+                new float[]{(float)numericUpDown21.Value, (float)numericUpDown22.Value, (float)numericUpDown23.Value,  (float)numericUpDown24.Value },
+                new float[]{(float)numericUpDown31.Value, (float)numericUpDown32.Value, (float)numericUpDown33.Value,  (float)numericUpDown34.Value },
+                };
+
+            if (checkBoxOnLocal.Checked)
+                UpdateMatrixLocal(matrix);
+            else
+                UpdateMatrix(matrix);
+            UpdateAllObjs();
+            pictureBox1.Refresh();
+        }
+
+        private void buttonSave_Click(object sender, EventArgs e)
+        {
+            BinaryFormatter formatter = new BinaryFormatter();
+
+            SaveFileDialog saveDialog = new SaveFileDialog();
+
+            GraphicPoint point = new GraphicPoint(0, 0);
+            point.X = 0;
+            point.Y = 0;
+            point.Z = 0;
+            //selectableGraphicObjects
+            List<object> allInfo = new List<object>();
+            allInfo.Add(Rxyz);
+            allInfo.Add(RxyzLocal);
+            allInfo.Add(point);
+            allInfo.Add(selectableGraphicObjects);
+
+            saveDialog.DefaultExt = "dat";
+            saveDialog.ShowDialog();
+           
+            
+            using (FileStream fs = new FileStream(saveDialog.FileName, FileMode.OpenOrCreate))
+            {
+                formatter.Serialize(fs, allInfo);
+            }
+        }
+
+        private void buttonLoad_Click(object sender, EventArgs e)
+        {
+            BinaryFormatter formatter = new BinaryFormatter();
+
+            OpenFileDialog openDialog = new OpenFileDialog();
+
+            openDialog.DefaultExt = "dat";
+            openDialog.ShowDialog();
+
+
+            List<object> allInfo = new List<object>();
+
+            if (!openDialog.FileName.Equals(""))
+            {
+                using (FileStream fs = new FileStream(openDialog.FileName, FileMode.Open))
+                {
+                    allInfo = (List<object>)formatter.Deserialize(fs);
+                }
+
+                Rxyz = (float[][])allInfo[0];
+                RxyzLocal = (float[][])allInfo[1];
+                GraphicObject.NullPoint = ((GraphicPoint)allInfo[2]).point;
+                GraphicObject.NullZ = ((GraphicPoint)allInfo[2]).z;
+                selectableGraphicObjects = ((List<GraphicObject>)allInfo[3]);
+            }
         }
     }
 }
