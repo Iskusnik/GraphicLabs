@@ -33,6 +33,7 @@
             this.vScrollBar1 = new System.Windows.Forms.VScrollBar();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.panelButtons = new System.Windows.Forms.Panel();
+            this.buttonMorph = new System.Windows.Forms.Button();
             this.buttonLoad = new System.Windows.Forms.Button();
             this.buttonSave = new System.Windows.Forms.Button();
             this.buttonApplyMatrix = new System.Windows.Forms.Button();
@@ -67,7 +68,9 @@
             this.buttonDel = new System.Windows.Forms.Button();
             this.button2PointsLine = new System.Windows.Forms.Button();
             this.colorDialog1 = new System.Windows.Forms.ColorDialog();
-            this.buttonMorph = new System.Windows.Forms.Button();
+            this.buttonMedian = new System.Windows.Forms.Button();
+            this.buttonHeight = new System.Windows.Forms.Button();
+            this.buttonBissec = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainerMain)).BeginInit();
             this.splitContainerMain.Panel1.SuspendLayout();
             this.splitContainerMain.Panel2.SuspendLayout();
@@ -148,12 +151,16 @@
             this.pictureBox1.TabIndex = 0;
             this.pictureBox1.TabStop = false;
             this.pictureBox1.Paint += new System.Windows.Forms.PaintEventHandler(this.pictureBox1_Paint);
+            this.pictureBox1.MouseClick += new System.Windows.Forms.MouseEventHandler(this.pictureBox1_MouseClick);
             this.pictureBox1.MouseDown += new System.Windows.Forms.MouseEventHandler(this.pictureBox1_MouseDown);
             this.pictureBox1.MouseMove += new System.Windows.Forms.MouseEventHandler(this.pictureBox1_MouseMove);
             this.pictureBox1.MouseUp += new System.Windows.Forms.MouseEventHandler(this.pictureBox1_MouseUp);
             // 
             // panelButtons
             // 
+            this.panelButtons.Controls.Add(this.buttonBissec);
+            this.panelButtons.Controls.Add(this.buttonHeight);
+            this.panelButtons.Controls.Add(this.buttonMedian);
             this.panelButtons.Controls.Add(this.buttonMorph);
             this.panelButtons.Controls.Add(this.buttonLoad);
             this.panelButtons.Controls.Add(this.buttonSave);
@@ -193,6 +200,16 @@
             this.panelButtons.Name = "panelButtons";
             this.panelButtons.Size = new System.Drawing.Size(286, 545);
             this.panelButtons.TabIndex = 0;
+            // 
+            // buttonMorph
+            // 
+            this.buttonMorph.Location = new System.Drawing.Point(29, 147);
+            this.buttonMorph.Name = "buttonMorph";
+            this.buttonMorph.Size = new System.Drawing.Size(243, 23);
+            this.buttonMorph.TabIndex = 33;
+            this.buttonMorph.Text = "Морфинг";
+            this.buttonMorph.UseVisualStyleBackColor = true;
+            this.buttonMorph.Click += new System.EventHandler(this.buttonMorph_Click);
             // 
             // buttonLoad
             // 
@@ -704,15 +721,35 @@
             this.button2PointsLine.UseVisualStyleBackColor = true;
             this.button2PointsLine.Click += new System.EventHandler(this.button2PointsLine_Click);
             // 
-            // buttonMorph
+            // buttonMedian
             // 
-            this.buttonMorph.Location = new System.Drawing.Point(29, 147);
-            this.buttonMorph.Name = "buttonMorph";
-            this.buttonMorph.Size = new System.Drawing.Size(243, 23);
-            this.buttonMorph.TabIndex = 33;
-            this.buttonMorph.Text = "Морфинг";
-            this.buttonMorph.UseVisualStyleBackColor = true;
-            this.buttonMorph.Click += new System.EventHandler(this.buttonMorph_Click);
+            this.buttonMedian.Location = new System.Drawing.Point(90, 176);
+            this.buttonMedian.Name = "buttonMedian";
+            this.buttonMedian.Size = new System.Drawing.Size(182, 23);
+            this.buttonMedian.TabIndex = 34;
+            this.buttonMedian.Text = "Медиана";
+            this.buttonMedian.UseVisualStyleBackColor = true;
+            this.buttonMedian.Click += new System.EventHandler(this.buttonMedian_Click);
+            // 
+            // buttonHeight
+            // 
+            this.buttonHeight.Location = new System.Drawing.Point(90, 205);
+            this.buttonHeight.Name = "buttonHeight";
+            this.buttonHeight.Size = new System.Drawing.Size(182, 23);
+            this.buttonHeight.TabIndex = 35;
+            this.buttonHeight.Text = "Высота";
+            this.buttonHeight.UseVisualStyleBackColor = true;
+            this.buttonHeight.Click += new System.EventHandler(this.buttonHeight_Click);
+            // 
+            // buttonBissec
+            // 
+            this.buttonBissec.Location = new System.Drawing.Point(90, 234);
+            this.buttonBissec.Name = "buttonBissec";
+            this.buttonBissec.Size = new System.Drawing.Size(182, 23);
+            this.buttonBissec.TabIndex = 36;
+            this.buttonBissec.Text = "Биссектриса";
+            this.buttonBissec.UseVisualStyleBackColor = true;
+            this.buttonBissec.Click += new System.EventHandler(this.button2_Click);
             // 
             // FormMain
             // 
@@ -800,6 +837,9 @@
         private System.Windows.Forms.Button buttonLoad;
         private System.Windows.Forms.Button buttonSave;
         private System.Windows.Forms.Button buttonMorph;
+        private System.Windows.Forms.Button buttonMedian;
+        private System.Windows.Forms.Button buttonBissec;
+        private System.Windows.Forms.Button buttonHeight;
     }
 }
 

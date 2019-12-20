@@ -129,6 +129,80 @@ namespace _2pointsNET4_8
             float clckX = e.Location.X;
             float clckY = e.Location.Y;
 
+            if (mhb != 0 && selectedObj != null && selectedObj is GraphicObject)
+            {
+                Point loc = e.Location;
+                switch (mhb)
+                {
+                    case 1:
+                        if (selectedObj is Line)
+                        {
+                            Line median = new Line(loc, new PointF(
+                                ((selectedObj as Line).A.point.X + (selectedObj as Line).B.point.X) / 2,
+                                ((selectedObj as Line).A.point.Y + (selectedObj as Line).B.point.Y) / 2));
+                            median.A.z = ((selectedObj as Line).A.z + (selectedObj as Line).B.z) / 2;
+
+                            selectableGraphicObjects.Add(median);
+                        }
+                        break;
+
+                    case 2:
+                        if (selectedObj is Line)
+                        {
+                            //Через x1, y1
+                            //A(y-y1)-B(x-x1)=0
+
+                            //Координаты точек
+                            float Ax = (selectedObj as Line).A.point.X, Ay = (selectedObj as Line).A.point.Y;
+                            float Bx = (selectedObj as Line).B.point.X, By = (selectedObj as Line).B.point.Y;
+
+                            //Вычисляем параметры прямой
+                            float A = By - Ay;
+                            float B = Ax - Bx;
+                            float C = -Ay * B - Ax * A;
+                            float d = (float)((Math.Abs(A * clckX + B * clckY + C)) / Math.Sqrt(A * A + B * B));
+
+                            float Aheight = B;
+                            float Bheight = -A;
+                            float Cheight = -Aheight * loc.X - Bheight * loc.Y;
+
+                            Line height = new Line(loc, GetIntersection(A, B, C, Aheight, Bheight, Cheight));
+
+                            selectableGraphicObjects.Add(height);
+                        }
+                        break;
+
+                    case 3:
+                        if (selectedObj is GraphicGroup)
+                        {
+                            Line Aline = (Line)(selectedObj as GraphicGroup).objectsGroup[0];
+                            Line Bline = (Line)(selectedObj as GraphicGroup).objectsGroup[1];
+
+                            float AlineX = Aline.A.point.X - Aline.B.point.X;
+                            float AlineY = Aline.A.point.Y - Aline.B.point.Y;
+                            float Alen = (float)Math.Sqrt(Math.Pow(AlineX, 2) + Math.Pow(AlineY, 2));
+
+                            float BlineX = Bline.A.point.X - Bline.B.point.X;
+                            float BlineY = Bline.A.point.Y - Bline.B.point.Y;
+                            float Blen = (float)Math.Sqrt(Math.Pow(BlineX, 2) + Math.Pow(BlineY, 2));
+
+                            PointF bissectrPoint = new PointF(AlineX*100/Alen + BlineX * 100 / Blen + Aline.A.point.X, AlineY * 100 / Alen + BlineY * 100 / Blen + Aline.A.point.Y);
+                            Line bissectr = new Line(new PointF(Aline.A.point.X, Aline.A.point.Y), bissectrPoint);
+
+                            selectableGraphicObjects.Add(bissectr);
+                            
+                            /*
+                            
+                            float Alen = (float)Math.Sqrt(Math.Pow(A.A.point.X - A.B.point.X, 2) + Math.Pow(A.A.point.Y - A.B.point.Y, 2));
+                            float Blen = (float)Math.Sqrt(Math.Pow(B.A.point.X - B.B.point.X, 2) + Math.Pow(B.A.point.Y - B.B.point.Y, 2));
+                            float newX = A.A.point.X + (Alen/Blen)*
+                            */
+                        }
+                        break;
+                }
+                mhb = 0;
+            }
+
             if (selectMode != 1)
             {
 
@@ -209,7 +283,16 @@ namespace _2pointsNET4_8
                     }
             }
         }
-                
+        public static PointF GetIntersection(float A1, float B1, float C1, float A2, float B2, float C2)
+        {
+            var X = B1 * C2 - B2 * C1;
+            var Y = A2 * C1 - A1 * C2;
+
+            var Z = A1 * B2 - A2 * B1;
+
+
+            return new PointF(X / Z, Y / Z);
+        }
 
         //Очистка от данных после сканирования
         private void pictureBox1_MouseUp(object sender, MouseEventArgs e)
@@ -1064,6 +1147,31 @@ namespace _2pointsNET4_8
                     graphicPoints.AddRange(GetPoints(item));
 
             return graphicPoints;
+        }
+
+
+        int mhb = 0;
+        private void buttonMedian_Click(object sender, EventArgs e)
+        {
+            mhb = 1;
+        }
+
+        
+
+        private void buttonHeight_Click(object sender, EventArgs e)
+        {
+            mhb = 2;
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            mhb = 3;
+            pictureBox1.Refresh();
+        }
+
+        private void pictureBox1_MouseClick(object sender, MouseEventArgs e)
+        {
+            
         }
     }
 }
