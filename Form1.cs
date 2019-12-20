@@ -7,6 +7,7 @@ using System.IO;
 using System.Linq;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -29,6 +30,9 @@ namespace _2pointsNET4_8
         Color GlobalColor;
         //Координаты курсора
         //float hoverX, hoverY;
+        GraphicObject A = null;
+        GraphicObject B = null;
+
 
         float[][] Rxyz;
         float[][] RxyzLocal;
@@ -70,8 +74,29 @@ namespace _2pointsNET4_8
                 if (!(selectedObj is null))
                     selectedObj.DrawObject(e.Graphics, specPen, solidBrushSpec);
 
-                
+
             }
+            if (morph)
+
+                for (int j = 0; j < pointsA.Count; j+=2)
+                {
+                    GraphicPoint Ap = new GraphicPoint(1, 1);
+                    GraphicPoint Bp = new GraphicPoint(1, 1);
+
+                    PointF pA = new PointF((pointsA[j].point.X * curT / T + pointsB[j].point.X * (T - curT) / T), (pointsA[j].point.Y * curT / T + pointsB[j].point.Y * (T - curT) / T));
+                    PointF pB = new PointF((pointsA[j + 1].point.X * curT / T + pointsB[j + 1].point.X * (T - curT) / T), (pointsA[j + 1].point.Y * curT / T + pointsB[j + 1].point.Y * (T - curT) / T));
+
+                    Ap.point = pA;
+                    Ap.z = (pointsA[j].z * curT / T + pointsB[j].z * (T - curT) / T);
+
+                    Bp.point = pB;
+                    Bp.z = (pointsA[j + 1].z * curT / T + pointsB[j + 1].z * (T - curT) / T);
+
+                    Line newLine = new Line(0, 0);
+                    newLine.A = Ap;
+                    newLine.B = Bp;
+                    newLine.DrawObject(e.Graphics, null, null);
+                }
 
             if (checkBoxAxes.Checked)
             {
@@ -89,7 +114,7 @@ namespace _2pointsNET4_8
                         case 2: specPen = new Pen(Color.LightGreen, 3); solidBrushSpec = new SolidBrush(Color.LightGreen); break;
                     }
                     axes[i].DrawObject(e.Graphics, specPen, solidBrushSpec);
-                } 
+                }
             }
         }
         
@@ -156,13 +181,33 @@ namespace _2pointsNET4_8
                     isRightClickLast = false;
                     rcmPoint = null;
                 }
+
+                
             }
             if (selectMode == 1 && selectedObj is GraphicGroup)
                 foreach (var obj in selectableGraphicObjects)
                     if (obj.CheckSelection(clckX, clckY))
                         (selectedObj as GraphicGroup).Add(obj);
 
-            
+            if (selectMode == 2)
+            {
+                bool checker = false;
+                foreach (var obj in selectableGraphicObjects)
+                    if (obj.CheckSelection(clckX, clckY))
+                    {
+                        checker = true;
+                        if (A == null)
+                            A = obj;
+                        else
+                            B = obj;
+                    }
+
+                if (!checker)
+                    { 
+                        A = null;
+                        B = null;
+                    }
+            }
         }
                 
 
@@ -959,6 +1004,66 @@ namespace _2pointsNET4_8
                 GraphicObject.NullZ = ((GraphicPoint)allInfo[2]).z;
                 selectableGraphicObjects = ((List<GraphicObject>)allInfo[3]);
             }
+        }
+
+        bool morph = false;
+        List<GraphicPoint> pointsA;
+        List<GraphicPoint> pointsB;
+        int T = 1000;
+        int curT = 0;
+        private void buttonMorph_Click(object sender, EventArgs e)
+        {
+            if (A != null && B != null)
+            {
+
+
+                pointsA = GetPoints(A);
+                pointsB = GetPoints(B);
+
+                int temp = 0;
+                while (pointsA.Count < pointsB.Count)
+                {
+                    pointsA.Add(pointsA[temp]);
+                    temp++;
+                    pointsA.Add(pointsA[temp]);
+                    temp++;
+                }
+
+                temp = 0;
+                while (pointsA.Count > pointsB.Count)
+                {
+                    pointsB.Add(pointsB[temp]);
+                    temp++;
+                    pointsB.Add(pointsB[temp]);
+                    temp++;
+                }
+
+                morph = true;
+                for (int i = 0; i < T; i++)
+                {
+                    curT = i;
+                    Thread.Sleep(2);
+                    pictureBox1.Refresh();
+                }
+
+                morph = false;
+            }
+        }
+
+        private List<GraphicPoint> GetPoints(GraphicObject obj)
+        {
+            List<GraphicPoint> graphicPoints = new List<GraphicPoint>();
+
+            if (obj is Line)
+            {
+                graphicPoints.Add((obj as Line).A);
+                graphicPoints.Add((obj as Line).B);
+            }
+            if (obj is GraphicGroup)
+                foreach (GraphicObject item in (obj as GraphicGroup).objectsGroup)
+                    graphicPoints.AddRange(GetPoints(item));
+
+            return graphicPoints;
         }
     }
 }
